@@ -11,6 +11,6 @@ PHP_FUNCTION(cplgetlasterrormsg);
 PHP_FUNCTION(cplgetconfigoption);
 PHP_FUNCTION(cplsetconfigoption);
 
-void gdal_cpl_startup(INIT_FUNC_ARGS);
+void php_gdal_cpl_startup(INIT_FUNC_ARGS);
 
 #endif // CPL_H_

@@ -1,6 +1,7 @@
 // http://docstore.mik.ua/orelly/webprog/php/ch14_06.htm
 // http://devzone.zend.com/article/4486 (c++ example)
 // http://devzone.zend.com/article/1022 (very good!)
+// http://talks.somabo.de/200903_montreal_php_extension_writing.pdf (good slideshow)
 
 //init zval*
 MAKE_STD_ZVAL(zval*);

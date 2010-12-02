@@ -81,7 +81,7 @@ PHP_FUNCTION(cplgetconfigoption)
   RETURN_STRING((char *)value, 1);
 }
 
-void gdal_cpl_startup(INIT_FUNC_ARGS)
+void php_gdal_cpl_startup(INIT_FUNC_ARGS)
 {
   REGISTER_LONG_CONSTANT("CPLE_None", CPLE_None,
                          CONST_CS | CONST_PERSISTENT);

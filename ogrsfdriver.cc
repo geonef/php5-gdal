@@ -70,6 +70,8 @@ PHP_METHOD(OGRSFDriver, GetName)
 
 PHP_METHOD(OGRSFDriver, TestCapability)
 {
+  // Available capabilities as of 1.7.3 (ogr_core.h):
+  //    "CreateDataSource", "DeleteDataSource"
   OGRSFDriver *driver;
   driver_object *obj;
   char *strcapability = NULL;

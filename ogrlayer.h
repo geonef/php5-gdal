@@ -1,14 +1,17 @@
 
-#ifndef OGRLAYER_H
-#define OGRLAYER_H
+#ifndef PHP_OGRLAYER_H
+#define PHP_OGRLAYER_H
 
-//#include "php.h"
-//#include "ogrsf_frmts.h"
+#include <ogrsf_frmts.h>
+#include "php.h"
 
-/* extern zend_object_handlers ogrlayer_object_handlers; */
-/* extern zend_class_entry *ogrlayer_ce; */
-/* extern function_entry ogrlayer_methods[]; */
+extern zend_class_entry *gdal_ogrlayer_ce;
 
-void gdal_ogrlayer_startup(INIT_FUNC_ARGS);
+struct php_ogrlayer_object {
+  zend_object std;
+  OGRLayer *layer;
+};
 
-#endif /* OGRLAYER_H */
+void php_gdal_ogrlayer_startup(INIT_FUNC_ARGS);
+
+#endif /* PHP_OGRLAYER_H */

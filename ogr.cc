@@ -1,6 +1,6 @@
 
 #include "php.h"
-#include "ogrsf_frmts.h"
+#include <ogrsf_frmts.h>
 
 PHP_FUNCTION(ogrregisterall)
 {
