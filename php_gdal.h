@@ -12,6 +12,8 @@ extern "C" {
 #include "php.h"
 }
 
+PHP_FUNCTION(gdal_test);
+
 extern zend_module_entry gdal_module_entry;
 #define phpext_gdal_ptr &gdal_module_entry;
 
