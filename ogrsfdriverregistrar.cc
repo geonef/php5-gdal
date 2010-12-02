@@ -5,6 +5,7 @@
 #include "ogrsf_frmts.h"
 #include "ogrsfdriverregistrar.h"
 #include "ogrsfdriver.h"
+#include "ogrdatasource.h"
 
 zend_class_entry *gdal_ogrsfdriverregistrar_ce;
 zend_object_handlers registrar_object_handlers;
@@ -80,7 +81,7 @@ PHP_METHOD(OGRSFDriverRegistrar, RegisterDriver)
   zval *drvp;
   zend_class_entry *ce = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "o", &drvp) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"o", &drvp) == FAILURE) {
     WRONG_PARAM_COUNT;
   }
 
@@ -114,7 +115,7 @@ PHP_METHOD(OGRSFDriverRegistrar, GetDriver)
   driver_object *driverObj;
   long index;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &index) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l", &index) == FAILURE) {
     WRONG_PARAM_COUNT;
   }
 
@@ -172,6 +173,35 @@ PHP_METHOD(OGRSFDriverRegistrar, GetOpenDSCount)
   RETURN_LONG(registrar->GetOpenDSCount());
 }
 
+PHP_METHOD(OGRSFDriverRegistrar, GetOpenDS)
+{
+  OGRSFDriverRegistrar *registrar;
+  registrar_object *obj;
+  OGRDataSource *datasource;
+  ogrdatasource_object *datasource_obj;
+  long index;
+
+  // TODO: &$driver param
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l", &index)
+      == FAILURE) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (registrar_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+  registrar = obj->registrar;
+  datasource = registrar->GetOpenDS(index);
+
+  if (!datasource) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_ogrdatasource_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  datasource_obj = (ogrdatasource_object*)
+    zend_object_store_get_object(return_value TSRMLS_CC);
+  datasource_obj->datasource = datasource;
+}
+
 PHP_METHOD(OGRSFDriverRegistrar, AutoLoadDrivers)
 {
   if (ZEND_NUM_ARGS() != 0) {
@@ -206,6 +236,33 @@ PHP_METHOD(OGRSFDriverRegistrar, GetRegistrar)
   //RETURN_ZVAL(zval, 0, ogrsfdriverregistrar_free_storage);
 }
 
+PHP_METHOD(OGRSFDriverRegistrar, Open)
+{
+  OGRDataSource *datasource;
+  ogrdatasource_object *datasource_obj;
+  char *ds_name;
+  int ds_name_len;
+  zend_bool update_mode = 0;
+  zval **zdrv;
+
+  // TODO: &$driver param
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s|b",
+                            &ds_name, ds_name_len, //&update_mode,
+                            &zdrv) == FAILURE) {
+    WRONG_PARAM_COUNT;
+  }
+
+  datasource = OGRSFDriverRegistrar::Open(ds_name, update_mode, NULL);
+  if (!datasource) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_ogrdatasource_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  datasource_obj = (ogrdatasource_object*)
+    zend_object_store_get_object(return_value TSRMLS_CC);
+  datasource_obj->datasource = datasource;
+}
 
 //
 // PHP stuff
@@ -218,10 +275,10 @@ function_entry ogrsfdriverregistrar_methods[] = {
   PHP_ME(OGRSFDriverRegistrar,  GetDriver,      NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriverRegistrar,  GetDriverByName, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriverRegistrar,  GetOpenDSCount, NULL, ZEND_ACC_PUBLIC)
-  //PHP_ME(OGRSFDriverRegistrar,  GetOpenDS,      NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSFDriverRegistrar,  GetOpenDS,      NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriverRegistrar,  AutoLoadDrivers, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriverRegistrar,  GetRegistrar,   NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-  //PHP_ME(OGRSFDriverRegistrar,  Open,           NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(OGRSFDriverRegistrar,  Open,           NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   {NULL, NULL, NULL}
 };
 

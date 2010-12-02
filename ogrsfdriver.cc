@@ -75,7 +75,7 @@ PHP_METHOD(OGRSFDriver, TestCapability)
   char *strcapability = NULL;
   int strcapability_len;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s",
                             &strcapability, &strcapability_len) == FAILURE) {
     WRONG_PARAM_COUNT;
   }

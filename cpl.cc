@@ -56,7 +56,7 @@ PHP_FUNCTION(cplsetconfigoption)
   int value_len;
   int argc = ZEND_NUM_ARGS();
 
-  if (zend_parse_parameters(argc TSRMLS_CC, "ss", &key, &key_len,
+  if (zend_parse_parameters(argc TSRMLS_CC, (char*)"ss", &key, &key_len,
                             &value, &value_len) == FAILURE)
     return;
 
@@ -73,7 +73,7 @@ PHP_FUNCTION(cplgetconfigoption)
   const char *value;
   int argc = ZEND_NUM_ARGS();
 
-  if (zend_parse_parameters(argc TSRMLS_CC, "ss", &key, &key_len,
+  if (zend_parse_parameters(argc TSRMLS_CC, (char*)"ss", &key, &key_len,
                             &_default, &_default_len) == FAILURE)
     return;
 

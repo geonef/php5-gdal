@@ -3,6 +3,7 @@
 #define OGRSFDRIVER_H
 
 #include "php.h"
+#include "ogrsf_frmts.h"
 
 extern zend_class_entry *gdal_ogrsfdriver_ce;
 

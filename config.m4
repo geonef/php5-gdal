@@ -57,5 +57,5 @@ if test "$PHP_GDAL" != "no"; then
   PHP_REQUIRE_CXX()
   PHP_SUBST(GDAL_SHARED_LIBADD)
   PHP_ADD_LIBRARY(stdc++, 1, GDAL_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(gdal, gdal.cc cpl.cc ogr.cc ogrsfdriverregistrar.cc ogrsfdriver.cc ogrlayer.cc, $ext_shared)
+  PHP_NEW_EXTENSION(gdal, gdal.cc cpl.cc ogr.cc ogrsfdriverregistrar.cc ogrsfdriver.cc ogrdatasource.cc ogrlayer.cc, $ext_shared)
 fi
