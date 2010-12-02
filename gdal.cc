@@ -7,6 +7,7 @@
 #include "cpl.h"
 #include "ogr.h"
 #include "ogrsfdriverregistrar.h"
+#include "ogrsfdriver.h"
 #include "ogrlayer.h"
 
 PHP_MINIT_FUNCTION(gdal)
@@ -14,6 +15,7 @@ PHP_MINIT_FUNCTION(gdal)
   //printf("Minit!\n");
   gdal_cpl_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrsfdriverregistrar_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_ogrsfdriver_startup(INIT_FUNC_ARGS_PASSTHRU);
   gdal_ogrlayer_startup(INIT_FUNC_ARGS_PASSTHRU);
   // REGISTER_LONG_CONSTANT("CPLE_None", CPLE_None,
   //                        CONST_CS | CONST_PERSISTENT);

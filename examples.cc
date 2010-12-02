@@ -1,4 +1,5 @@
-
+// http://docstore.mik.ua/orelly/webprog/php/ch14_06.htm
+// http://devzone.zend.com/article/4486
 
 //init zval*
 MAKE_STD_ZVAL(zval*);
