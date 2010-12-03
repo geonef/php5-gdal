@@ -15,6 +15,10 @@
 #include "ogrdatasource.h"
 #include "ogrlayer.h"
 #include "ogrfeaturedefn.h"
+#include "ogrfielddefn.h"
+#include "ogrenvelope.h"
+#include "ogrspatialreference.h"
+#include "ogrfeature.h"
 
 PHP_MINIT_FUNCTION(gdal)
 {
@@ -25,6 +29,10 @@ PHP_MINIT_FUNCTION(gdal)
   php_gdal_ogrdatasource_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrlayer_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrfeaturedefn_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_ogrfielddefn_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_ogrenvelope_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_ogrspatialreference_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_ogrfeature_startup(INIT_FUNC_ARGS_PASSTHRU);
   // REGISTER_LONG_CONSTANT("CPLE_None", CPLE_None,
   //                        CONST_CS | CONST_PERSISTENT);
   // REGISTER_LONG_CONSTANT("CPLE_AppDefined", CPLE_AppDefined,

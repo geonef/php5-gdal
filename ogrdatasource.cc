@@ -1,11 +1,13 @@
 
 
 #include <ogrsf_frmts.h>
+#include <ogr_spatialref.h>
 #include "php.h"
 #include "php_gdal.h"
 #include "ogrdatasource.h"
 #include "ogrsfdriver.h"
 #include "ogrlayer.h"
+#include "ogrspatialreference.h"
 
 zend_class_entry *gdal_ogrdatasource_ce;
 zend_object_handlers ogrdatasource_object_handlers;
@@ -99,7 +101,7 @@ PHP_METHOD(OGRDataSource, GetLayer)
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
                             &index) == FAILURE) {
-    WRONG_PARAM_COUNT;
+    return;
   }
   obj = (php_ogrdatasource_object *)
     zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -113,10 +115,56 @@ PHP_METHOD(OGRDataSource, GetLayer)
     RETURN_NULL();
   }
   layer_obj = (php_ogrlayer_object*)
+    zend_object_store_get_object(return_value TSRMLS_CC);
+  layer_obj->layer = layer;
+}
+
+PHP_METHOD(OGRDataSource, GetLayerByName)
+{
+  OGRDataSource *datasource;
+  php_ogrdatasource_object *obj;
+  OGRLayer *layer;
+  php_ogrlayer_object *layer_obj;
+  char *name;
+  int name_len;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s",
+                            &name, &name_len) == FAILURE) {
+    return;
+  }
+  obj = (php_ogrdatasource_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  datasource = obj->datasource;
+
+  layer = datasource->GetLayerByName(name);
+  if (!layer) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_ogrlayer_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  layer_obj = (php_ogrlayer_object*)
     zend_object_store_get_object
     //zend_objects_get_address
     (return_value TSRMLS_CC);
   layer_obj->layer = layer;
+}
+
+PHP_METHOD(OGRDataSource, DeleteLayer)
+{
+  OGRDataSource *datasource;
+  php_ogrdatasource_object *obj;
+  long index;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &index) == FAILURE) {
+    return;
+  }
+  obj = (php_ogrdatasource_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  datasource = obj->datasource;
+
+  RETURN_LONG(datasource->DeleteLayer(index));
 }
 
 PHP_METHOD(OGRDataSource, TestCapability)
@@ -130,13 +178,74 @@ PHP_METHOD(OGRDataSource, TestCapability)
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s",
                             &strcapability, &strcapability_len) == FAILURE) {
-    WRONG_PARAM_COUNT;
+    return;
   }
 
   obj = (php_ogrdatasource_object *)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   datasource = obj->datasource;
   RETURN_BOOL(datasource->TestCapability(strcapability));
+}
+
+PHP_METHOD(OGRDataSource, CreateLayer)
+{
+  // Available capabilities as of 1.7.3 (ogr_core.h):
+  //    "CreateLayer", "DeleteLayer"
+  char *name = NULL;
+  int name_len;
+  OGRwkbGeometryType gtype = wkbUnknown;
+  zval *spatialrefp = NULL;
+  php_ogrspatialreference_object *spatialref_obj;
+  OGRSpatialReference *spatialref = NULL;
+  php_ogrdatasource_object *obj;
+  OGRDataSource *datasource;
+  OGRLayer *layer;
+  php_ogrlayer_object *layer_obj;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s|O!l",
+                            &name, &name_len, &spatialrefp,
+                            gdal_ogrspatialreference_ce, &gtype) == FAILURE) {
+    return;
+  }
+
+  if (spatialrefp) {
+    spatialref_obj = (php_ogrspatialreference_object *)
+      zend_object_store_get_object(spatialrefp);
+    spatialref = spatialref_obj->spatialreference;
+  }
+
+  obj = (php_ogrdatasource_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  datasource = obj->datasource;
+
+  layer = datasource->CreateLayer(name, spatialref, gtype, NULL /* TODO: pass options */);
+  if (!layer) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_ogrlayer_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  layer_obj = (php_ogrlayer_object*)
+    zend_object_store_get_object(return_value TSRMLS_CC);
+  layer_obj->layer = layer;
+
+}
+
+PHP_METHOD(OGRDataSource, SyncToDisk)
+{
+  OGRDataSource *datasource;
+  php_ogrdatasource_object *obj;
+  OGRErr error;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrdatasource_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  datasource = obj->datasource;
+  error = datasource->SyncToDisk();
+  RETURN_LONG(error);
 }
 
 PHP_METHOD(OGRDataSource, GetDriver)
@@ -174,18 +283,19 @@ function_entry ogrdatasource_methods[] = {
   PHP_ME(OGRDataSource, GetName, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, GetLayerCount, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, GetLayer, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRDataSource, GetLayerByName, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRDataSource, DeleteLayer, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRDataSource, GetLayerByName, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRDataSource, DeleteLayer, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, TestCapability, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRDataSource, CreateLayer, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRDataSource, CreateLayer, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRDataSource, CopyLayer, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRDataSource, GetStyleTable, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRDataSource, SetStyleTableDirectly, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRDataSource, SetStyleTable, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRDataSource, ExecuteSQL, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRDataSource, ReleaseResultSet, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRDataSource, SyncToDisk, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRDataSource, SyncToDisk, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, GetDriver, NULL, ZEND_ACC_PUBLIC)
+  //PHP_ME(OGRDataSource, SetDriver, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 

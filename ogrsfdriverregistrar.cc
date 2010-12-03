@@ -82,7 +82,8 @@ PHP_METHOD(OGRSFDriverRegistrar, RegisterDriver)
   zval *drvp;
   zend_class_entry *ce = NULL;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"o", &drvp) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
+                            &drvp, gdal_ogrsfdriver_ce) == FAILURE) {
     WRONG_PARAM_COUNT;
   }
 

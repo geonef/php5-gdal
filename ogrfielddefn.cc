@@ -90,37 +90,37 @@ PHP_METHOD(OGRFieldDefn, GetNameRef)
   }
 }
 
-// PHP_METHOD(OGRFieldDefn, GetType)
-// {
-//   OGRFieldDefn *fielddefn;
-//   php_ogrfielddefn_object *obj;
+PHP_METHOD(OGRFieldDefn, GetType)
+{
+  OGRFieldDefn *fielddefn;
+  php_ogrfielddefn_object *obj;
 
-//   if (ZEND_NUM_ARGS() != 0) {
-//     WRONG_PARAM_COUNT;
-//   }
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
 
-//   obj = (php_ogrfielddefn_object *)
-//     zend_object_store_get_object(getThis() TSRMLS_CC);
-//   fielddefn = obj->fielddefn;
-//   RETURN_LONG((long)fielddefn->GetType());
-// }
+  obj = (php_ogrfielddefn_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  fielddefn = obj->fielddefn;
+  RETURN_LONG((long)fielddefn->GetType());
+}
 
-// PHP_METHOD(OGRFieldDefn, SetType)
-// {
-//   OGRFieldDefn *fielddefn;
-//   php_ogrfielddefn_object *obj;
-//   long type;
+PHP_METHOD(OGRFieldDefn, SetType)
+{
+  OGRFieldDefn *fielddefn;
+  php_ogrfielddefn_object *obj;
+  long type;
 
-//   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
-//                             &type) == FAILURE) {
-//     WRONG_PARAM_COUNT;
-//   }
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &type) == FAILURE) {
+    WRONG_PARAM_COUNT;
+  }
 
-//   obj = (php_ogrfielddefn_object *)
-//     zend_object_store_get_object(getThis() TSRMLS_CC);
-//   fielddefn = obj->fielddefn;
-//   fielddefn->SetGeomType((OGRFieldType)type);
-// }
+  obj = (php_ogrfielddefn_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  fielddefn = obj->fielddefn;
+  fielddefn->SetType((OGRFieldType)type);
+}
 
 PHP_METHOD(OGRFieldDefn, GetJustify)
 {
@@ -226,8 +226,8 @@ PHP_METHOD(OGRFieldDefn, SetPrecision)
 function_entry ogrfielddefn_methods[] = {
   PHP_ME(OGRFieldDefn, SetName,                 NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFieldDefn, GetNameRef,              NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFieldDefn, GetType,                 NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFieldDefn, SetType,                 NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFieldDefn, GetType,                 NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFieldDefn, SetType,                 NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFieldDefn, GetFieldTypeName,        NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFieldDefn, GetJustify,              NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFieldDefn, SetJustify,              NULL, ZEND_ACC_PUBLIC)

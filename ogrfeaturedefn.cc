@@ -103,6 +103,7 @@ PHP_METHOD(OGRFeatureDefn, GetFieldDefn)
   obj = (php_ogrfeaturedefn_object *)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   featuredefn = obj->featuredefn;
+
   fielddefn = featuredefn->GetFieldDefn(index);
   if (!fielddefn) {
     RETURN_NULL();
@@ -141,8 +142,8 @@ PHP_METHOD(OGRFeatureDefn, AddFieldDefn)
   OGRFieldDefn *fielddefn;
   php_ogrfielddefn_object *fielddefn_obj;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"o",
-                            &fielddefnp) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
+                            &fielddefnp, gdal_ogrfielddefn_ce) == FAILURE) {
     WRONG_PARAM_COUNT;
   }
 
