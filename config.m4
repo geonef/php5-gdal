@@ -11,7 +11,7 @@ if test "$PHP_GDAL" != "no"; then
   if test -r $PHP_GDAL/; then
     GDAL_DIR=$PHP_GDAL
   else # search default path list
-    AC_MSG_CHECKING([for ORG files in default path])
+    AC_MSG_CHECKING([for OGR files in default path])
     for i in $SEARCH_PATH ; do
       if test -r $i/$SEARCH_FOR; then
         GDAL_DIR=$i
