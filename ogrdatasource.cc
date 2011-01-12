@@ -18,8 +18,18 @@ zend_object_handlers ogrdatasource_object_handlers;
 
 void ogrdatasource_free_storage(void *object TSRMLS_DC)
 {
+  char *msg;
+  int i;
+  int i2;
   php_ogrdatasource_object *obj = (php_ogrdatasource_object *)object;
+
   //delete obj->layer; // TODO
+  i = obj->datasource->GetRefCount();
+  obj->datasource->Release();
+  // i2 = obj->datasource->GetRefCount();
+  asprintf(&msg, "release OGRDataSource; count1=%d, count2=%d", i, i2);
+  php_log_err(msg);
+  free(msg);
   zend_hash_destroy(obj->std.properties);
   FREE_HASHTABLE(obj->std.properties);
   efree(obj);
@@ -274,6 +284,51 @@ PHP_METHOD(OGRDataSource, GetDriver)
   driver_obj->driver = driver;
 }
 
+PHP_METHOD(OGRDataSource, Reference)
+{
+  OGRDataSource *datasource;
+  php_ogrdatasource_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrdatasource_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  datasource = obj->datasource;
+  RETURN_LONG(datasource->Reference());
+}
+
+PHP_METHOD(OGRDataSource, Dereference)
+{
+  OGRDataSource *datasource;
+  php_ogrdatasource_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrdatasource_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  datasource = obj->datasource;
+  RETURN_LONG(datasource->Reference());
+}
+
+PHP_METHOD(OGRDataSource, GetRefCount)
+{
+  OGRDataSource *datasource;
+  php_ogrdatasource_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrdatasource_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  datasource = obj->datasource;
+  RETURN_LONG(datasource->Reference());
+}
+
 
 //
 // PHP stuff
@@ -296,6 +351,9 @@ function_entry ogrdatasource_methods[] = {
   PHP_ME(OGRDataSource, SyncToDisk, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, GetDriver, NULL, ZEND_ACC_PUBLIC)
   //PHP_ME(OGRDataSource, SetDriver, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRDataSource, Reference, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRDataSource, Dereference, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRDataSource, GetRefCount, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 
