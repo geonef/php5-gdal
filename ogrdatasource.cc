@@ -311,7 +311,7 @@ PHP_METHOD(OGRDataSource, Dereference)
   obj = (php_ogrdatasource_object *)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   datasource = obj->datasource;
-  RETURN_LONG(datasource->Reference());
+  RETURN_LONG(datasource->Dereference());
 }
 
 PHP_METHOD(OGRDataSource, GetRefCount)
@@ -326,7 +326,7 @@ PHP_METHOD(OGRDataSource, GetRefCount)
   obj = (php_ogrdatasource_object *)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   datasource = obj->datasource;
-  RETURN_LONG(datasource->Reference());
+  RETURN_LONG(datasource->GetRefCount());
 }
 
 

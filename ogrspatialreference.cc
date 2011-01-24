@@ -68,19 +68,194 @@ zend_object_value ogrspatialreference_create_handler(zend_class_entry *type TSRM
 //   spatialreference->SetName(name);
 // }
 
+PHP_METHOD(OGRSpatialReference, Reference)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+  RETURN_LONG(spatialreference->Reference());
+}
+
+PHP_METHOD(OGRSpatialReference, Dereference)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+  RETURN_LONG(spatialreference->Dereference());
+}
+
+PHP_METHOD(OGRSpatialReference, GetReferenceCount)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+  RETURN_LONG(spatialreference->GetReferenceCount());
+}
+
+PHP_METHOD(OGRSpatialReference, Release)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+  RETURN_NULL();
+}
+
+PHP_METHOD(OGRSpatialReference, Clone)
+{
+  OGRSpatialReference *spatialreference;
+  OGRSpatialReference *spatialreference_clone;
+  php_ogrspatialreference_object *obj;
+  php_ogrspatialreference_object *obj_clone;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+  spatialreference_clone = spatialreference->Clone();
+  if (object_init_ex(return_value, gdal_ogrspatialreference_ce) != SUCCESS) {
+    spatialreference_clone->Release();
+    RETURN_NULL();
+  }
+  obj_clone = (php_ogrspatialreference_object*)
+    zend_object_store_get_object(return_value TSRMLS_CC);
+  obj_clone->spatialreference = spatialreference_clone;
+}
+
+PHP_METHOD(OGRSpatialReference, CloneGeogCS)
+{
+  OGRSpatialReference *spatialreference;
+  OGRSpatialReference *spatialreference_clone;
+  php_ogrspatialreference_object *obj;
+  php_ogrspatialreference_object *obj_clone;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+  spatialreference_clone = spatialreference->CloneGeogCS();
+  if (object_init_ex(return_value, gdal_ogrspatialreference_ce) != SUCCESS) {
+    spatialreference_clone->Release();
+    RETURN_NULL();
+  }
+  obj_clone = (php_ogrspatialreference_object*)
+    zend_object_store_get_object(return_value TSRMLS_CC);
+  obj_clone->spatialreference = spatialreference_clone;
+}
+
+PHP_METHOD(OGRSpatialReference, exportToWkt)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+  char *str;
+  char *ret;
+  zval *tmp;
+  int err;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+
+  err = spatialreference->exportToWkt(&str);
+  if (err == OGRERR_NONE) {
+    ret = estrdup(str);
+    OGRFree(str);
+    RETURN_STRING(ret, 0);
+  } else {
+    RETURN_LONG(err);
+  }
+}
+
+PHP_METHOD(OGRSpatialReference, importFromEPSG)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+  long code;
+  int err;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &code) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+
+  err = spatialreference->importFromEPSG(code);
+  RETURN_LONG(err);
+}
+
+PHP_METHOD(OGRSpatialReference, importFromEPSGA)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+  long code;
+  int err;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &code) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+
+  err = spatialreference->importFromEPSGA(code);
+  RETURN_LONG(err);
+}
+
 
 //
 // PHP stuff
 //
 
 function_entry ogrspatialreference_methods[] = {
-  // PHP_ME(OGRSpatialReference, Reference, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, Dereference, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, GetReferenceCount, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, Release, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, Clone, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, CloneGeogCS, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, exportToWkt, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, Reference, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, Dereference, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, GetReferenceCount, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, Release, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, Clone, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, CloneGeogCS, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, exportToWkt, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, exportToPrettyWkt, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, exportToProj4, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, exportToPCI, NULL, ZEND_ACC_PUBLIC)
@@ -89,10 +264,10 @@ function_entry ogrspatialreference_methods[] = {
   // PHP_ME(OGRSpatialReference, exportToPanorama, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, exportToERM, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, exportToMICoordSys, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, importFromWkt, NULL, ZEND_ACC_PUBLIC)
+  //PHP_ME(OGRSpatialReference, importFromWkt, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, importFromProj4, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, importFromEPSG, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, importFromEPSGA, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, importFromEPSG, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, importFromEPSGA, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, importFromESRI, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, importFromPCI, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, importFromUSGS, NULL, ZEND_ACC_PUBLIC)

@@ -563,7 +563,7 @@ PHP_METHOD(OGRLayer, Dereference)
   obj = (php_ogrlayer_object *)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   layer = obj->layer;
-  RETURN_LONG(layer->Reference());
+  RETURN_LONG(layer->Dereference());
 }
 
 PHP_METHOD(OGRLayer, GetRefCount)
@@ -578,7 +578,7 @@ PHP_METHOD(OGRLayer, GetRefCount)
   obj = (php_ogrlayer_object *)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   layer = obj->layer;
-  RETURN_LONG(layer->Reference());
+  RETURN_LONG(layer->GetRefCount());
 }
 
 PHP_METHOD(OGRLayer, GetFeaturesRead)
