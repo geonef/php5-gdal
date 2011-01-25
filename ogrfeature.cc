@@ -119,7 +119,8 @@ PHP_METHOD(OGRFeature, CreateFeature)
   php_ogrfeature_object *feature_obj;
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
-                            &featuredefnp, gdal_ogrfeaturedefn_ce) == FAILURE) {
+                            &featuredefnp, gdal_ogrfeaturedefn_ce)
+      == FAILURE) {
     return;
   }
 

@@ -176,7 +176,8 @@ static void doTransform(INTERNAL_FUNCTION_PARAMETERS, int ex)
   if (!PZVAL_IS_REF(*px) || !PZVAL_IS_REF(*py) ||
       (pz && !PZVAL_IS_REF(*pz))) {
     php_error_docref(NULL TSRMLS_CC, E_ERROR,
-                     "Array arguments must be passed by reference");
+                     "Arguments of OGRCoordinateTransformation::Transform"
+                     " must be passed by reference");
     return;
   }
   // get float arrays
