@@ -43,8 +43,8 @@ static void errorHandler(CPLErr eErrClass, int err_no, const char *msg)
 
 static PHP_INI_MH(onIniChangeGdalData)
 {
-  php_log_err((char *) "gdal data change");
-  php_log_err(new_value);
+  // php_log_err((char *) "gdal data change");
+  // php_log_err(new_value);
   char const *dataPath = new_value;
   if (dataPath && dataPath[0]) {
     CPLSetConfigOption("GDAL_DATA", dataPath);
@@ -55,24 +55,15 @@ static PHP_INI_MH(onIniChangeGdalData)
 
 static PHP_INI_MH(onIniChangeErrorHandler)
 {
-  php_log_err((char *) "gdal onIniChangeErrorHandler change");
-  php_log_err(new_value);
-  if  (atoi(new_value)) {
-    CPLSetErrorHandler(errorHandler);
-  } else {
-    CPLSetErrorHandler(NULL);
-  }
+  CPLSetErrorHandler(atoi(new_value) ? errorHandler : NULL);
   return(SUCCESS);
 
 }
 
 static PHP_INI_MH(onIniChangeCplDebug)
 {
-  php_log_err((char *) "gdal onIniChangeCplDebug");
-  php_log_err(new_value);
   CPLSetConfigOption("CPL_DEBUG", atoi(new_value) ? "ON" : "OFF");
   return(SUCCESS);
-
 }
 
 // about INI: http://docstore.mik.ua/orelly/webprog/php/ch14_12.htm
