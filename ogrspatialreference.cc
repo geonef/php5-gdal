@@ -598,6 +598,48 @@ PHP_METHOD(OGRSpatialReference, SetProjection)
   RETURN_LONG(err);
 }
 
+PHP_METHOD(OGRSpatialReference, SetWellKnownGeogCS)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+  char *str;
+  int str_len;
+  int err;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s",
+                            &str, &str_len) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+
+  err = spatialreference->SetWellKnownGeogCS(str);
+  RETURN_LONG(err);
+}
+
+PHP_METHOD(OGRSpatialReference, SetFromUserInput)
+{
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *obj;
+  char *str;
+  int str_len;
+  int err;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s",
+                            &str, &str_len) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrspatialreference_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  spatialreference = obj->spatialreference;
+
+  err = spatialreference->SetFromUserInput(str);
+  RETURN_LONG(err);
+}
+
 
 PHP_METHOD(OGRSpatialReference, AutoIdentifyEPSG)
 {
@@ -751,9 +793,9 @@ function_entry ogrspatialreference_methods[] = {
   PHP_ME(OGRSpatialReference, SetProjCS, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSpatialReference, SetProjection, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, SetGeogCS, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, SetWellKnownGeogCS, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, SetWellKnownGeogCS, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, CopyGeogCSFrom, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRSpatialReference, SetFromUserInput, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSpatialReference, SetFromUserInput, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, SetTOWGS84, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, GetTOWGS84, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRSpatialReference, GetSemiMajor, NULL, ZEND_ACC_PUBLIC)

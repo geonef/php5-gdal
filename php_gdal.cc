@@ -21,6 +21,69 @@
 #include "ogrcoordtransform.h"
 #include "ogrfeature.h"
 
+static void errorHandler(CPLErr eErrClass, int err_no, const char *msg)
+{
+  // types are CPLE_* constants, classes are CPLErr values, both from cpl_error.h
+  char const * const types[] = { "None", "AppDefined", "OutOfMemory", "FileIO",
+                                 "OpenFailed", "IllegalArg", "NotSupported",
+                                 "AssertionFailed", "NoWriteAccess",
+                                 "UserInterrupt", "ObjectNull", "UNKNOWN" };
+  char const * const classes[] = { "NONE", "DEBUG", "WARNING", "FAILURE", "FATAL", "UNKNOWN" };
+  char *str;
+  if (err_no > 11) {
+    err_no = 11;
+  }
+  if (eErrClass > 5) {
+    eErrClass = (CPLErr) 5;
+  }
+  asprintf(&str, "GDAL/OGR %s: [%s] %s", classes[eErrClass], types[err_no], msg);
+  php_log_err(str);
+  free(str);
+}
+
+static PHP_INI_MH(onIniChangeGdalData)
+{
+  php_log_err((char *) "gdal data change");
+  php_log_err(new_value);
+  char const *dataPath = new_value;
+  if (dataPath && dataPath[0]) {
+    CPLSetConfigOption("GDAL_DATA", dataPath);
+  }
+  return(SUCCESS);
+
+}
+
+static PHP_INI_MH(onIniChangeErrorHandler)
+{
+  php_log_err((char *) "gdal onIniChangeErrorHandler change");
+  php_log_err(new_value);
+  if  (atoi(new_value)) {
+    CPLSetErrorHandler(errorHandler);
+  } else {
+    CPLSetErrorHandler(NULL);
+  }
+  return(SUCCESS);
+
+}
+
+static PHP_INI_MH(onIniChangeCplDebug)
+{
+  php_log_err((char *) "gdal onIniChangeCplDebug");
+  php_log_err(new_value);
+  CPLSetConfigOption("CPL_DEBUG", atoi(new_value) ? "ON" : "OFF");
+  return(SUCCESS);
+
+}
+
+// about INI: http://docstore.mik.ua/orelly/webprog/php/ch14_12.htm
+// GDAL options: http://trac.osgeo.org/gdal/wiki/ConfigOptions
+
+PHP_INI_BEGIN()
+PHP_INI_ENTRY("gdal.gdal_data", "", PHP_INI_ALL, onIniChangeGdalData)
+PHP_INI_ENTRY("gdal.cpl_debug", "Off", PHP_INI_ALL, onIniChangeCplDebug)
+PHP_INI_ENTRY("gdal.enable_error_handler", "On", PHP_INI_ALL, onIniChangeErrorHandler)
+PHP_INI_END()
+
 PHP_MINIT_FUNCTION(gdal)
 {
   php_gdal_cpl_startup(INIT_FUNC_ARGS_PASSTHRU);
@@ -103,6 +166,14 @@ PHP_MINIT_FUNCTION(gdal)
   REGISTER_STRING_CONSTANT("OLCTransactions", (char*)OLCTransactions, OGR_CONST_FLAG);
   REGISTER_STRING_CONSTANT("ODsCCreateLayer", (char*)ODsCCreateLayer, OGR_CONST_FLAG);
   REGISTER_STRING_CONSTANT("ODrCCreateDataSource", (char*)ODrCCreateDataSource, OGR_CONST_FLAG);
+
+  REGISTER_INI_ENTRIES();
+
+
+  // char const *dataPath = INI_STR((char *) "gdal.gdal_data");
+  // if (dataPath && dataPath[0]) {
+  //   CPLSetConfigOption("GDAL_DATA", dataPath);
+  // }
   return SUCCESS;
 }
 
@@ -112,13 +183,15 @@ PHP_MSHUTDOWN_FUNCTION(gdal)
   /* uncomment this line if you have INI entries
      UNREGISTER_INI_ENTRIES();
   */
+  CPLSetErrorHandler(NULL);
+  UNREGISTER_INI_ENTRIES();
   return SUCCESS;
 }
 
 /* Remove if there's nothing to do at request start */
 PHP_RINIT_FUNCTION(gdal)
 {
-  //printf("Rinit!\n");
+  //CPLError(CE_Warning, CPLE_AppDefined, "Test!!");
   return SUCCESS;
 }
 
@@ -180,9 +253,7 @@ PHP_MINFO_FUNCTION(gdal)
   str = NULL;
   php_info_print_table_end();
 
-  /* Remove comments if you have entries in php.ini
-     DISPLAY_INI_ENTRIES();
-  */
+  DISPLAY_INI_ENTRIES();
 }
 
 static function_entry gdal_functions[] = {

@@ -20,14 +20,12 @@ void ogrdatasource_free_storage(void *object TSRMLS_DC)
 {
   char *msg;
   int i;
-  int i2;
   php_ogrdatasource_object *obj = (php_ogrdatasource_object *)object;
 
   //delete obj->layer; // TODO
   i = obj->datasource->GetRefCount();
-  obj->datasource->Release();
-  // i2 = obj->datasource->GetRefCount();
-  asprintf(&msg, "release OGRDataSource; count1=%d, count2=%d", i, i2);
+  asprintf(&msg, "release OGRDataSource; count1=%d, count2=%d", i);
+  obj->datasource->Dereference();
   php_log_err(msg);
   free(msg);
   zend_hash_destroy(obj->std.properties);
