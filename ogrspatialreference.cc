@@ -14,8 +14,7 @@ zend_object_handlers ogrspatialreference_object_handlers;
 void ogrspatialreference_free_storage(void *object TSRMLS_DC)
 {
   php_ogrspatialreference_object *obj = (php_ogrspatialreference_object *)object;
-  //delete obj->spatialreference; // TODO
-  obj->spatialreference->Dereference();
+  // TODO: check ownership
   zend_hash_destroy(obj->std.properties);
   FREE_HASHTABLE(obj->std.properties);
   efree(obj);

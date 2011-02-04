@@ -16,7 +16,6 @@ zend_object_handlers ogrfeaturedefn_object_handlers;
 void ogrfeaturedefn_free_storage(void *object TSRMLS_DC)
 {
   php_ogrfeaturedefn_object *obj = (php_ogrfeaturedefn_object *)object;
-  //delete obj->featuredefn; // TODO
   zend_hash_destroy(obj->std.properties);
   FREE_HASHTABLE(obj->std.properties);
   efree(obj);

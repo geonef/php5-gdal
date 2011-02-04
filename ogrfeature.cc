@@ -15,7 +15,8 @@ zend_object_handlers ogrfeature_object_handlers;
 void ogrfeature_free_storage(void *object TSRMLS_DC)
 {
   php_ogrfeature_object *obj = (php_ogrfeature_object *)object;
-  OGRFeature::DestroyFeature(obj->feature);
+  // TODO: check ownership
+  // OGRFeature::DestroyFeature(obj->feature);
   zend_hash_destroy(obj->std.properties);
   FREE_HASHTABLE(obj->std.properties);
   efree(obj);
@@ -141,6 +142,24 @@ PHP_METHOD(OGRFeature, CreateFeature)
   feature_obj->feature = feature;
 }
 
+PHP_METHOD(OGRFeature, DestroyFeature)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  zval *p;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
+                            &p, gdal_ogrfeature_ce) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfeature_object *)zend_object_store_get_object(p);
+  if (obj) {
+    feature = obj->feature;
+    OGRFeature::DestroyFeature(feature);
+  }
+}
+
 
 //
 // PHP stuff
@@ -186,7 +205,7 @@ function_entry ogrfeature_methods[] = {
   // PHP_ME(OGRFeature, SetStyleTable, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, SetStyleTableDirectly, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFeature, CreateFeature, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-  // PHP_ME(OGRFeature, DestroyFeature, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(OGRFeature, DestroyFeature, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   {NULL, NULL, NULL}
 };
 

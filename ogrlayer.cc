@@ -21,6 +21,13 @@ void ogrlayer_free_storage(void *object TSRMLS_DC)
 {
   php_ogrlayer_object *obj = (php_ogrlayer_object *)object;
   //delete obj->layer; // TODO
+  ////
+  // char *msg; int i;
+  // i = obj->layer->GetRefCount();
+  // asprintf(&msg, "OGRLayer FREE refc=%d", i);
+  // php_log_err(msg);
+  // free(msg);
+  ////
   zend_hash_destroy(obj->std.properties);
   FREE_HASHTABLE(obj->std.properties);
   efree(obj);

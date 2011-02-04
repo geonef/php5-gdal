@@ -106,3 +106,15 @@ PHP_FUNCTION(getgdaldrivermanager)
   obj->drivermanager = manager;
 
 }
+
+PHP_FUNCTION(gdalallregister)
+{
+  GDALDriverManager *manager;
+  php_gdaldrivermanager_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  GDALAllRegister();
+}

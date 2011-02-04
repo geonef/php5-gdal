@@ -19,15 +19,16 @@ zend_object_handlers ogrdatasource_object_handlers;
 void ogrdatasource_free_storage(void *object TSRMLS_DC)
 {
   char *msg;
-  int i;
+  int i, i2;
   php_ogrdatasource_object *obj = (php_ogrdatasource_object *)object;
 
-  //delete obj->layer; // TODO
-  i = obj->datasource->GetRefCount();
-  asprintf(&msg, "release OGRDataSource; count1=%d, count2=%d", i);
-  obj->datasource->Dereference();
-  php_log_err(msg);
-  free(msg);
+  // i = obj->datasource->GetRefCount();
+  // obj->datasource->Dereference();
+  // //obj->datasource->Release(); // Release() is for "shared" (?) datasources
+  // i2 = obj->datasource->GetRefCount();
+  // asprintf(&msg, "OGRDataSource FREE; count_bef=%d, count_aft=%d", i, i2);
+  // php_log_err(msg);
+  // free(msg);
   zend_hash_destroy(obj->std.properties);
   FREE_HASHTABLE(obj->std.properties);
   efree(obj);
@@ -115,10 +116,22 @@ PHP_METHOD(OGRDataSource, GetLayer)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   datasource = obj->datasource;
 
+  int i = datasource->GetRefCount();
   layer = datasource->GetLayer(index);
   if (!layer) {
     RETURN_NULL();
   }
+  ////
+  char *msg; int i2;
+  i2 = datasource->GetRefCount();
+  asprintf(&msg, "OGRDataSource::GetLayer bef=%d aft=%d", i, i2);
+  php_log_err(msg);
+  free(msg);
+  i = layer->GetRefCount();
+  asprintf(&msg, "OGRDataSource::GetLayer layerrefC=%d", i);
+  php_log_err(msg);
+  free(msg);
+  ////
   if (object_init_ex(return_value, gdal_ogrlayer_ce) != SUCCESS) {
     RETURN_NULL();
   }
@@ -144,10 +157,22 @@ PHP_METHOD(OGRDataSource, GetLayerByName)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   datasource = obj->datasource;
 
+  int i = datasource->GetRefCount();
   layer = datasource->GetLayerByName(name);
   if (!layer) {
     RETURN_NULL();
   }
+  ////
+  char *msg; int i2;
+  i2 = datasource->GetRefCount();
+  asprintf(&msg, "OGRDataSource::GetLayerByName bef=%d aft=%d", i, i2);
+  php_log_err(msg);
+  free(msg);
+  i = layer->GetRefCount();
+  asprintf(&msg, "OGRDataSource::GetLayer layerrefC=%d", i);
+  php_log_err(msg);
+  free(msg);
+  ////
   if (object_init_ex(return_value, gdal_ogrlayer_ce) != SUCCESS) {
     RETURN_NULL();
   }
@@ -327,6 +352,47 @@ PHP_METHOD(OGRDataSource, GetRefCount)
   RETURN_LONG(datasource->GetRefCount());
 }
 
+PHP_METHOD(OGRDataSource, Close)
+{
+  OGRDataSource *datasource;
+  php_ogrdatasource_object *obj;
+  zval *p;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrdatasource_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  datasource = obj->datasource;
+
+  ////
+  char *msg;
+  asprintf(&msg, "OGRDataSource::DestroyDataSource %x", datasource);
+  php_log_err(msg);
+  free(msg);
+  ////
+  OGRDataSource::DestroyDataSource(datasource);
+}
+
+PHP_METHOD(OGRDataSource, DestroyDataSource)
+{
+  OGRDataSource *datasource;
+  php_ogrdatasource_object *obj;
+  zval *p;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
+                            &p, gdal_ogrdatasource_ce) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrdatasource_object *)zend_object_store_get_object(p);
+  if (obj) {
+    datasource = obj->datasource;
+    OGRDataSource::DestroyDataSource(datasource);
+  }
+}
+
 
 //
 // PHP stuff
@@ -352,6 +418,8 @@ function_entry ogrdatasource_methods[] = {
   PHP_ME(OGRDataSource, Reference, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, Dereference, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, GetRefCount, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRDataSource, Close, NULL, ZEND_ACC_PUBLIC) // extra
+  PHP_ME(OGRDataSource, DestroyDataSource, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   {NULL, NULL, NULL}
 };
 

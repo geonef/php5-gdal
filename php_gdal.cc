@@ -10,6 +10,8 @@
 #include "cpl.h"
 #include "gdal.h"
 #include "ogr.h"
+#include "ogr_api.h"
+#include "gdal_main.h"
 #include "gdaldrivermanager.h"
 #include "gdaldriver.h"
 #include "gdaldataset.h"
@@ -197,7 +199,24 @@ PHP_RINIT_FUNCTION(gdal)
 /* Remove if there's nothing to do at request end */
 PHP_RSHUTDOWN_FUNCTION(gdal)
 {
-  //printf("Rshutdown!\n");
+  // //--DEBUG START
+  // char *msg;
+  // int i, i1, i2, c;
+  // OGRSFDriverRegistrar *registrar = OGRSFDriverRegistrar::GetRegistrar();
+  // OGRDataSource *ds;
+  // c = registrar->GetOpenDSCount();
+  // asprintf(&msg, "RSHUTDOWN openDS count=%d", c);
+  // php_log_err(msg);
+  // free(msg);
+  // for (i = 0; i < c; ++i) {
+  //   ds = registrar->GetOpenDS(i);
+  //   i1 = ds->GetRefCount();
+  //   asprintf(&msg, "RSHUTDOWN openDS[%d]: refC=%d", i, i1);
+  //   php_log_err(msg);
+  //   free(msg);
+  // }
+  // //--DEBUG END
+  OGRCleanupAll();
   return SUCCESS;
 }
 
@@ -265,6 +284,11 @@ static function_entry gdal_functions[] = {
   PHP_FE(cplsetconfigoption, NULL)
   PHP_FE(ogrregisterall, NULL)
   //PHP_FE(ogrcleanupall, NULL)
+  PHP_FE(gdalversioninfo, NULL)
+  PHP_FE(gdalopen, NULL)
+  PHP_FE(gdalopenshared, NULL)
+  PHP_FE(getgdaldrivermanager, NULL)
+  PHP_FE(gdalallregister, NULL)
   {NULL, NULL, NULL}
 };
 

@@ -84,7 +84,7 @@ PHP_METHOD(OGRSFDriverRegistrar, RegisterDriver)
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
                             &drvp, gdal_ogrsfdriver_ce) == FAILURE) {
-    WRONG_PARAM_COUNT;
+    return;
   }
 
   obj = (registrar_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -255,10 +255,22 @@ PHP_METHOD(OGRSFDriverRegistrar, Open)
     WRONG_PARAM_COUNT;
   }
 
+  if (ds_name_len == 0) {
+    php_error_docref(NULL TSRMLS_CC, E_WARNING, "Empty string as path");
+    RETURN_FALSE;
+  }
+
   datasource = OGRSFDriverRegistrar::Open(ds_name, update_mode, NULL);
   if (!datasource) {
     RETURN_NULL();
   }
+  ////
+  char *msg; int i;
+  i = datasource->GetRefCount();
+  asprintf(&msg, "OGRSFDriverRegistrar::Open path=\"%s\" refcount=%d", ds_name, i);
+  php_log_err(msg);
+  free(msg);
+  ////
   if (object_init_ex(return_value, gdal_ogrdatasource_ce) != SUCCESS) {
     RETURN_NULL();
   }
@@ -273,7 +285,7 @@ PHP_METHOD(OGRSFDriverRegistrar, Open)
 //
 
 function_entry ogrsfdriverregistrar_methods[] = {
-  // despite the API, there is no DeregisterDriver()
+  // despite the API web page, there is no DeregisterDriver()
   PHP_ME(OGRSFDriverRegistrar,  RegisterDriver,  NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriverRegistrar,  GetDriverCount,  NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriverRegistrar,  GetDriver,       NULL, ZEND_ACC_PUBLIC)
@@ -283,6 +295,8 @@ function_entry ogrsfdriverregistrar_methods[] = {
   PHP_ME(OGRSFDriverRegistrar,  AutoLoadDrivers, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriverRegistrar,  GetRegistrar,    NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   PHP_ME(OGRSFDriverRegistrar,  Open,            NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  // We don't use OpenShared, to keep things simple
+  //PHP_ME(OGRSFDriverRegistrar,  OpenShared,       NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   {NULL, NULL, NULL}
 };
 

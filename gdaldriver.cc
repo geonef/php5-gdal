@@ -56,6 +56,46 @@ zend_object_value gdaldriver_create_handler(zend_class_entry *type TSRMLS_DC)
 // CLASS METHODS
 //
 
+PHP_METHOD(GDALDriver, GetDescription)
+{
+  GDALDriver *driver;
+  php_gdaldriver_object *obj;
+  char *name;
+  int name_len;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_gdaldriver_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  driver = obj->driver;
+  const char *descr = driver->GetDescription();
+  if (descr) {
+    RETURN_STRING((char *)descr, 1);
+  } else {
+    RETURN_NULL();
+  }
+}
+
+PHP_METHOD(GDALDriver, SetDescription)
+{
+  GDALDriver *driver;
+  php_gdaldriver_object *obj;
+  char *name;
+  int name_len;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s",
+                            &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  obj = (php_gdaldriver_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  driver = obj->driver;
+  driver->SetDescription(name);
+}
+
 PHP_METHOD(GDALDriver, Delete)
 {
   GDALDriver *driver;
@@ -214,6 +254,10 @@ PHP_METHOD(GDALDriver, DefaultCopyFiles)
 //
 
 function_entry gdaldriver_methods[] = {
+  //-- parent class
+  PHP_ME(GDALDriver, GetDescription, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(GDALDriver, SetDescription, NULL, ZEND_ACC_PUBLIC)
+  //--
   // PHP_ME(GDALDriver, Create, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriver, Delete, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriver, Rename, NULL, ZEND_ACC_PUBLIC)
