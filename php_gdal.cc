@@ -10,6 +10,9 @@
 #include "cpl.h"
 #include "gdal.h"
 #include "ogr.h"
+#include "gdaldrivermanager.h"
+#include "gdaldriver.h"
+#include "gdaldataset.h"
 #include "ogrsfdriverregistrar.h"
 #include "ogrsfdriver.h"
 #include "ogrdatasource.h"
@@ -78,6 +81,9 @@ PHP_INI_END()
 PHP_MINIT_FUNCTION(gdal)
 {
   php_gdal_cpl_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_gdaldrivermanager_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_gdaldriver_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_gdaldataset_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrsfdriverregistrar_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrsfdriver_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrdatasource_startup(INIT_FUNC_ARGS_PASSTHRU);
@@ -157,6 +163,8 @@ PHP_MINIT_FUNCTION(gdal)
   REGISTER_STRING_CONSTANT("OLCTransactions", (char*)OLCTransactions, OGR_CONST_FLAG);
   REGISTER_STRING_CONSTANT("ODsCCreateLayer", (char*)ODsCCreateLayer, OGR_CONST_FLAG);
   REGISTER_STRING_CONSTANT("ODrCCreateDataSource", (char*)ODrCCreateDataSource, OGR_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("GA_ReadOnly", GA_ReadOnly, OGR_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("GA_Update", GA_Update, OGR_CONST_FLAG);
 
   REGISTER_INI_ENTRIES();
 

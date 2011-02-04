@@ -1,7 +1,10 @@
 
 #include "php.h"
 #include <gdal.h>
+#include <gdal_priv.h>
 #include "gdal_main.h"
+#include "gdaldataset.h"
+#include "gdaldrivermanager.h"
 
 #ifndef GDAL_H_INCLUDED
 #error "grrr"
@@ -28,3 +31,78 @@ PHP_FUNCTION(gdalversioninfo)
   }
 }
 
+PHP_FUNCTION(gdalopen)
+{
+  GDALDataset *dataset;
+  php_gdaldataset_object *dataset_obj;
+  char *path;
+  int path_len;
+  int mode;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"sl",
+                            &path, &path_len, &mode) == FAILURE) {
+    WRONG_PARAM_COUNT;
+  }
+
+  dataset = (GDALDataset *) GDALOpen(path, mode == GA_ReadOnly ?
+                                     GA_ReadOnly : GA_Update);
+  if (!dataset) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_gdaldataset_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  dataset_obj = (php_gdaldataset_object*)
+    zend_objects_get_address(return_value TSRMLS_CC);
+  dataset_obj->dataset = dataset;
+
+}
+
+PHP_FUNCTION(gdalopenshared)
+{
+  GDALDataset *dataset;
+  php_gdaldataset_object *dataset_obj;
+  char *path;
+  int path_len;
+  int mode;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"sl",
+                            &path, &path_len, &mode) == FAILURE) {
+    WRONG_PARAM_COUNT;
+  }
+
+  dataset = (GDALDataset *) GDALOpenShared(path, mode == GA_ReadOnly ?
+                                           GA_ReadOnly : GA_Update);
+  if (!dataset) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_gdaldataset_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  dataset_obj = (php_gdaldataset_object*)
+    zend_objects_get_address(return_value TSRMLS_CC);
+  dataset_obj->dataset = dataset;
+
+}
+
+PHP_FUNCTION(getgdaldrivermanager)
+{
+  GDALDriverManager *manager;
+  php_gdaldrivermanager_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  manager = GetGDALDriverManager();
+  if (!manager) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_gdaldrivermanager_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  obj = (php_gdaldrivermanager_object*)
+    zend_objects_get_address(return_value TSRMLS_CC);
+  obj->drivermanager = manager;
+
+}
