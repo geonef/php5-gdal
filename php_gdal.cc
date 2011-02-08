@@ -80,8 +80,38 @@ PHP_INI_ENTRY("gdal.cpl_debug", "Off", PHP_INI_ALL, onIniChangeCplDebug)
 PHP_INI_ENTRY("gdal.enable_error_handler", "On", PHP_INI_ALL, onIniChangeErrorHandler)
 PHP_INI_END()
 
+#define PHP_GDAL_OGRDATASOURCE_PTR_DTOR (void (*)(void *))php_gdal_ogrdatasource_ptr_dtor
+
+
+//////////////////////////////////////////////////////////////////////
+// GLOBALS
+
+ZEND_DECLARE_MODULE_GLOBALS(gdal)
+
+static void php_gdal_globals_ctor(zend_gdal_globals *gdal_globals)
+{
+  //gdal_globals->some_integer = 0;
+  //gdal_globals->some_string = NULL;
+  //int zend_hash_init_ex ( HashTable* ht, uint nSize, hash_func_t pHashFunction, dtor_func_t pDestructor, zend_bool persistent, zend_bool bApplyProtection )
+  //php_log_err("php5-gdal: globals_ctor");
+  zend_hash_init_ex(&gdal_globals->ogrDataSources, 0, NULL, PHP_GDAL_OGRDATASOURCE_PTR_DTOR, 1 /* 1 */, 0);
+}
+
+static void php_gdal_globals_dtor(zend_gdal_globals *gdal_globals)
+{
+  php_log_err("php5-gdal: globals_dtor");
+  zend_hash_destroy(&gdal_globals->ogrDataSources);
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// MODULE WORKFLOW
+
 PHP_MINIT_FUNCTION(gdal)
 {
+  ZEND_INIT_MODULE_GLOBALS(gdal, php_gdal_globals_ctor,
+                           php_gdal_globals_dtor);
+
   php_gdal_cpl_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_gdaldrivermanager_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_gdaldriver_startup(INIT_FUNC_ARGS_PASSTHRU);
@@ -186,6 +216,7 @@ PHP_MSHUTDOWN_FUNCTION(gdal)
   */
   CPLSetErrorHandler(NULL);
   UNREGISTER_INI_ENTRIES();
+  //zend_hash_destroy(&GDAL_G(ogrDataSources));
   return SUCCESS;
 }
 
@@ -216,7 +247,22 @@ PHP_RSHUTDOWN_FUNCTION(gdal)
   //   free(msg);
   // }
   // //--DEBUG END
+  ////
+  char *msg;
+  ////
   OGRCleanupAll();
+  ////
+  // asprintf(&msg, "php5-gdal: after OGRCleanupAll");
+  // php_log_err(msg);
+  // free(msg);
+  ////
+  zend_hash_clean(&GDAL_G(ogrDataSources));
+  //ogrdatasource_destroy_all();
+  ////
+  asprintf(&msg, "php5-gdal: after zend_hash_clean");
+  php_log_err(msg);
+  free(msg);
+  ////
   return SUCCESS;
 }
 
@@ -275,7 +321,6 @@ PHP_MINFO_FUNCTION(gdal)
 }
 
 static function_entry gdal_functions[] = {
-  PHP_FE(gdal_test, NULL)
   PHP_FE(cplerrorreset, NULL)
   PHP_FE(cplgetlasterrorno, NULL)
   PHP_FE(cplgetlasterrortype, NULL)
@@ -314,8 +359,3 @@ extern "C" {
   ZEND_GET_MODULE(gdal)
 }
 #endif
-
-PHP_FUNCTION(gdal_test)
-{
-  RETURN_STRING("Test GDAL :)", 1);
-}

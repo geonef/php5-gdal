@@ -12,6 +12,46 @@
 zend_class_entry *gdal_ogrdatasource_ce;
 zend_object_handlers ogrdatasource_object_handlers;
 
+void php_gdal_ogrdatasource_add_to_hash(php_ogrdatasource_object *obj)
+{
+  ////
+  char *msg;
+  HashPosition pos;
+
+  // asprintf(&msg, "php5-gdal: ogrdatasource_add_to_hash");
+  // php_log_err(msg);
+  // free(msg);
+  ////
+  zend_hash_next_index_insert(&GDAL_G(ogrDataSources),
+                              &(obj->datasource),
+                              sizeof(obj->datasource), NULL);
+  zend_hash_internal_pointer_end_ex(&GDAL_G(ogrDataSources), &pos);
+  if (zend_hash_get_current_key_ex(&GDAL_G(ogrDataSources), NULL, NULL,
+                                   &obj->hashIndex, 0, &pos)
+      != HASH_KEY_IS_LONG) {
+    php_log_err("php5-gdal: failed to get hash index for datasource");
+  }
+  ////
+  asprintf(&msg, "php5-gdal: got OGR datasource hash index: %d",
+           (int)obj->hashIndex);
+  php_log_err(msg);
+  free(msg);
+  ////
+  //zend_hash_num_elements
+}
+
+void php_gdal_ogrdatasource_ptr_dtor(void **ptr)
+{
+  OGRDataSource *datasource = (OGRDataSource *)*ptr;
+  ////
+  // char *msg;
+  // asprintf(&msg, "php5-gdal: php_gdal_ogrdatasource_ptr_dtor ############");
+  // php_log_err(msg);
+  // free(msg);
+  ////
+  OGRDataSource::DestroyDataSource(datasource);
+}
+
 //
 // PHP stuff
 //
@@ -343,7 +383,7 @@ PHP_METHOD(OGRDataSource, GetRefCount)
   php_ogrdatasource_object *obj;
 
   if (ZEND_NUM_ARGS() != 0) {
-    return;
+    WRONG_PARAM_COUNT;
   }
 
   obj = (php_ogrdatasource_object *)
@@ -359,7 +399,7 @@ PHP_METHOD(OGRDataSource, Close)
   zval *p;
 
   if (ZEND_NUM_ARGS() != 0) {
-    return;
+    WRONG_PARAM_COUNT;
   }
 
   obj = (php_ogrdatasource_object *)
@@ -372,7 +412,7 @@ PHP_METHOD(OGRDataSource, Close)
   php_log_err(msg);
   free(msg);
   ////
-  OGRDataSource::DestroyDataSource(datasource);
+  //OGRDataSource::DestroyDataSource(datasource);
 }
 
 PHP_METHOD(OGRDataSource, DestroyDataSource)

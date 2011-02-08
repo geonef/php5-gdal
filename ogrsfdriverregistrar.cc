@@ -265,11 +265,11 @@ PHP_METHOD(OGRSFDriverRegistrar, Open)
     RETURN_NULL();
   }
   ////
-  char *msg; int i;
-  i = datasource->GetRefCount();
-  asprintf(&msg, "OGRSFDriverRegistrar::Open path=\"%s\" refcount=%d", ds_name, i);
-  php_log_err(msg);
-  free(msg);
+  // char *msg; int i;
+  // i = datasource->GetRefCount();
+  // asprintf(&msg, "OGRSFDriverRegistrar::Open path=\"%s\" refcount=%d", ds_name, i);
+  // php_log_err(msg);
+  // free(msg);
   ////
   if (object_init_ex(return_value, gdal_ogrdatasource_ce) != SUCCESS) {
     RETURN_NULL();
@@ -278,6 +278,8 @@ PHP_METHOD(OGRSFDriverRegistrar, Open)
     //zend_object_store_get_object
     zend_objects_get_address(return_value TSRMLS_CC);
   datasource_obj->datasource = datasource;
+
+  php_gdal_ogrdatasource_add_to_hash(datasource_obj);
 }
 
 //
