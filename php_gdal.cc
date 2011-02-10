@@ -99,7 +99,7 @@ static void php_gdal_globals_ctor(zend_gdal_globals *gdal_globals)
 
 static void php_gdal_globals_dtor(zend_gdal_globals *gdal_globals)
 {
-  php_log_err("php5-gdal: globals_dtor");
+  //php_log_err("php5-gdal: globals_dtor");
   zend_hash_destroy(&gdal_globals->ogrDataSources);
 }
 
@@ -259,9 +259,9 @@ PHP_RSHUTDOWN_FUNCTION(gdal)
   zend_hash_clean(&GDAL_G(ogrDataSources));
   //ogrdatasource_destroy_all();
   ////
-  asprintf(&msg, "php5-gdal: after zend_hash_clean");
-  php_log_err(msg);
-  free(msg);
+  // asprintf(&msg, "php5-gdal: after zend_hash_clean");
+  // php_log_err(msg);
+  // free(msg);
   ////
   return SUCCESS;
 }
