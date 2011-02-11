@@ -4,6 +4,7 @@
 #include <ogr_feature.h>
 #include "ogrfeature.h"
 #include "ogrfeaturedefn.h"
+#include "ogrfielddefn.h"
 
 zend_class_entry *gdal_ogrfeature_ce;
 zend_object_handlers ogrfeature_object_handlers;
@@ -50,6 +51,186 @@ zend_object_value ogrfeature_create_handler(zend_class_entry *type TSRMLS_DC)
 //
 // CLASS METHODS
 //
+
+PHP_METHOD(OGRFeature, GetDefnRef)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  OGRFeatureDefn *featuredefn;
+  php_ogrfeaturedefn_object *featuredefn_obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  featuredefn = feature->GetDefnRef();
+  if (!featuredefn) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_ogrfeaturedefn_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  featuredefn_obj = (php_ogrfeaturedefn_object*)
+    zend_objects_get_address(return_value TSRMLS_CC);
+  featuredefn_obj->featuredefn = featuredefn;
+}
+
+PHP_METHOD(OGRFeature, GetFieldCount)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+  RETURN_LONG(feature->GetFieldCount());
+}
+
+PHP_METHOD(OGRFeature, GetFieldDefnRef)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  OGRFieldDefn *fielddefn;
+  php_ogrfielddefn_object *fielddefn_obj;
+  long index;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &index) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  fielddefn = feature->GetFieldDefnRef(index);
+  if (!fielddefn) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_ogrfielddefn_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  fielddefn_obj = (php_ogrfielddefn_object*)
+    zend_objects_get_address(return_value TSRMLS_CC);
+  fielddefn_obj->fielddefn = fielddefn;
+}
+
+PHP_METHOD(OGRFeature, GetFieldIndex)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  char *name;
+  int name_len;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s",
+                            &name, &name_len) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+  RETURN_LONG(feature->GetFieldIndex(name));
+}
+
+PHP_METHOD(OGRFeature, IsFieldSet)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  long idx;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &idx) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  RETURN_BOOL(feature->IsFieldSet(idx));
+}
+
+PHP_METHOD(OGRFeature, UnsetField)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  long idx;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &idx) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  feature->UnsetField(idx);
+}
+
+PHP_METHOD(OGRFeature, GetFieldAsInteger)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  long idx;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &idx) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  RETURN_LONG(feature->GetFieldAsInteger(idx));
+}
+
+PHP_METHOD(OGRFeature, GetFieldAsDouble)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  long idx;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &idx) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  RETURN_DOUBLE(feature->GetFieldAsInteger(idx));
+}
+
+PHP_METHOD(OGRFeature, GetFieldAsString)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  long idx;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &idx) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  const char *str = feature->GetFieldAsString(idx);
+  RETURN_STRING((char *)str, 1);
+}
 
 PHP_METHOD(OGRFeature, GetFID)
 {
@@ -166,22 +347,22 @@ PHP_METHOD(OGRFeature, DestroyFeature)
 //
 
 function_entry ogrfeature_methods[] = {
-  // PHP_ME(OGRFeature, GetDefnRef, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, GetDefnRef, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, SetGeometryDirectly, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, SetGeometry, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, GetGeometryRef, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, StealGeometry, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, Clone, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, Equal, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, GetFieldCount, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, GetFieldDefnRef, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, GetFieldIndex, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, IsFieldSet, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, UnsetField, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, GetFieldCount, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, GetFieldDefnRef, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, GetFieldIndex, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, IsFieldSet, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, UnsetField, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, GetRawFieldRef, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, GetFieldAsInteger, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, GetFieldAsDouble, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, GetFieldAsString, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, GetFieldAsInteger, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, GetFieldAsDouble, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, GetFieldAsString, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, GetFieldAsIntegerList, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, GetFieldAsDoubleList, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, GetFieldAsStringList, NULL, ZEND_ACC_PUBLIC)

@@ -96,7 +96,7 @@ PHP_METHOD(OGRFeatureDefn, GetFieldDefn)
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
                             &index) == FAILURE) {
-    WRONG_PARAM_COUNT;
+    return;
   }
 
   obj = (php_ogrfeaturedefn_object *)
@@ -124,7 +124,7 @@ PHP_METHOD(OGRFeatureDefn, GetFieldIndex)
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s",
                             &name, &name_len) == FAILURE) {
-    WRONG_PARAM_COUNT;
+    return;
   }
 
   obj = (php_ogrfeaturedefn_object *)
@@ -143,7 +143,7 @@ PHP_METHOD(OGRFeatureDefn, AddFieldDefn)
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
                             &fielddefnp, gdal_ogrfielddefn_ce) == FAILURE) {
-    WRONG_PARAM_COUNT;
+    return;
   }
 
   obj = (php_ogrfeaturedefn_object *)
@@ -179,7 +179,7 @@ PHP_METHOD(OGRFeatureDefn, SetGeomType)
 
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
                             &geomType) == FAILURE) {
-    WRONG_PARAM_COUNT;
+    return;
   }
 
   obj = (php_ogrfeaturedefn_object *)
