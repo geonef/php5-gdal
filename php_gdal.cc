@@ -41,9 +41,9 @@ static void errorHandler(CPLErr eErrClass, int err_no, const char *msg)
     eErrClass = (CPLErr) 5;
   }
   //
-  char str[1000];
-  sprintf(str, "GDAL/OGR %s: [%s] %s", classes[eErrClass], types[err_no], msg);
-  php_log_err(str);
+  // char str[1000];
+  // sprintf(str, "GDAL/OGR %s: [%s] %s", classes[eErrClass], types[err_no], msg);
+  // php_log_err(str);
 }
 
 static PHP_INI_MH(onIniChangeGdalData)
@@ -69,12 +69,12 @@ static PHP_INI_MH(onIniChangeGdalData)
 
 static PHP_INI_MH(onIniChangeErrorHandler)
 {
-  char msg[500];
-  sprintf(msg, "php5-gdal: onIniChangeErrorHandler: stage=%d [%d, %d, %d]",
-          stage, PHP_INI_STAGE_STARTUP, PHP_INI_STAGE_SHUTDOWN, PHP_INI_STAGE_RUNTIME);
-  php_log_err(msg);
-  sprintf(msg, "php5-gdal: onIniChangeErrorHandler: %s", new_value);
-  php_log_err(msg);
+  // char msg[500];
+  // sprintf(msg, "php5-gdal: onIniChangeErrorHandler: stage=%d [%d, %d, %d]",
+  //         stage, PHP_INI_STAGE_STARTUP, PHP_INI_STAGE_SHUTDOWN, PHP_INI_STAGE_RUNTIME);
+  // php_log_err(msg);
+  // sprintf(msg, "php5-gdal: onIniChangeErrorHandler: %s", new_value);
+  // php_log_err(msg);
 
   CPLSetErrorHandler(atoi(new_value) ? errorHandler : NULL);
 
