@@ -34,50 +34,76 @@ static void errorHandler(CPLErr eErrClass, int err_no, const char *msg)
                                  "AssertionFailed", "NoWriteAccess",
                                  "UserInterrupt", "ObjectNull", "UNKNOWN" };
   char const * const classes[] = { "NONE", "DEBUG", "WARNING", "FAILURE", "FATAL", "UNKNOWN" };
-  char *str;
   if (err_no > 11) {
     err_no = 11;
   }
   if (eErrClass > 5) {
     eErrClass = (CPLErr) 5;
   }
-  asprintf(&str, "GDAL/OGR %s: [%s] %s", classes[eErrClass], types[err_no], msg);
+  //
+  char str[1000];
+  sprintf(str, "GDAL/OGR %s: [%s] %s", classes[eErrClass], types[err_no], msg);
   php_log_err(str);
-  free(str);
 }
 
 static PHP_INI_MH(onIniChangeGdalData)
 {
   // php_log_err((char *) "gdal data change");
   // php_log_err(new_value);
+  ////
+  // char msg[500];
+  // sprintf(msg, "php5-gdal: onIniChangeGdalData: stage=%d [%d, %d, %d]",
+  //         stage, PHP_INI_STAGE_STARTUP, PHP_INI_STAGE_SHUTDOWN, PHP_INI_STAGE_RUNTIME);
+  // php_log_err(msg);
+  // sprintf(msg, "php5-gdal: onIniChangeGdalData: %s", new_value);
+  // php_log_err(msg);
+  ////
   char const *dataPath = new_value;
-  if (dataPath && dataPath[0]) {
-    CPLSetConfigOption("GDAL_DATA", dataPath);
-  }
-  return(SUCCESS);
+  //if (dataPath && dataPath[0]) {
+  // CPLSetConfigOption will copy the value string
+  CPLSetConfigOption("GDAL_DATA", dataPath && dataPath[0] ? dataPath : NULL);
+  //}
 
+  return (SUCCESS);
 }
 
 static PHP_INI_MH(onIniChangeErrorHandler)
 {
-  CPLSetErrorHandler(atoi(new_value) ? errorHandler : NULL);
-  return(SUCCESS);
+  char msg[500];
+  sprintf(msg, "php5-gdal: onIniChangeErrorHandler: stage=%d [%d, %d, %d]",
+          stage, PHP_INI_STAGE_STARTUP, PHP_INI_STAGE_SHUTDOWN, PHP_INI_STAGE_RUNTIME);
+  php_log_err(msg);
+  sprintf(msg, "php5-gdal: onIniChangeErrorHandler: %s", new_value);
+  php_log_err(msg);
 
+  CPLSetErrorHandler(atoi(new_value) ? errorHandler : NULL);
+
+  return (SUCCESS);
 }
 
 static PHP_INI_MH(onIniChangeCplDebug)
 {
+  ////
+  // char msg[500];
+  // sprintf(msg, "php5-gdal: onIniChangeCplDebug: stage=%d [%d, %d, %d]",
+  //         stage, PHP_INI_STAGE_STARTUP, PHP_INI_STAGE_SHUTDOWN, PHP_INI_STAGE_RUNTIME);
+  // php_log_err(msg);
+  // sprintf(msg, "php5-gdal: onIniChangeCplDebug: %s", new_value);
+  // php_log_err(msg);
+  ////
+  // CPLSetConfigOption will copy the value string
   CPLSetConfigOption("CPL_DEBUG", atoi(new_value) ? "ON" : "OFF");
-  return(SUCCESS);
+
+  return (SUCCESS);
 }
 
 // about INI: http://docstore.mik.ua/orelly/webprog/php/ch14_12.htm
 // GDAL options: http://trac.osgeo.org/gdal/wiki/ConfigOptions
 
 PHP_INI_BEGIN()
-PHP_INI_ENTRY("gdal.gdal_data", "", PHP_INI_ALL, onIniChangeGdalData)
-PHP_INI_ENTRY("gdal.cpl_debug", "Off", PHP_INI_ALL, onIniChangeCplDebug)
-PHP_INI_ENTRY("gdal.enable_error_handler", "On", PHP_INI_ALL, onIniChangeErrorHandler)
+PHP_INI_ENTRY((char*)"gdal.gdal_data", (char*)"", PHP_INI_ALL, onIniChangeGdalData)
+PHP_INI_ENTRY((char*)"gdal.cpl_debug", (char*)"Off", PHP_INI_ALL, onIniChangeCplDebug)
+PHP_INI_ENTRY((char*)"gdal.enable_error_handler", (char*)"On", PHP_INI_ALL, onIniChangeErrorHandler)
 PHP_INI_END()
 
 #define PHP_GDAL_OGRDATASOURCE_PTR_DTOR (void (*)(void *))php_gdal_ogrdatasource_ptr_dtor
@@ -248,15 +274,15 @@ PHP_RSHUTDOWN_FUNCTION(gdal)
   // }
   // //--DEBUG END
   ////
-  char *msg;
+  //char *msg;
   ////
-  OGRCleanupAll();
+  //try//OGRCleanupAll(); -> makes segfault when MapScript is used as well
   ////
   // asprintf(&msg, "php5-gdal: after OGRCleanupAll");
   // php_log_err(msg);
   // free(msg);
   ////
-  zend_hash_clean(&GDAL_G(ogrDataSources));
+  //try//zend_hash_clean(&GDAL_G(ogrDataSources));
   //ogrdatasource_destroy_all();
   ////
   // asprintf(&msg, "php5-gdal: after zend_hash_clean");

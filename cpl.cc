@@ -12,6 +12,7 @@ PHP_FUNCTION(cplerrorreset)
     WRONG_PARAM_COUNT;
   }
 
+  php_log_err("php5-gdal: CPLErrorReset");
   CPLErrorReset();
 }
 
@@ -22,6 +23,7 @@ PHP_FUNCTION(cplgetlasterrorno)
     WRONG_PARAM_COUNT;
   }
 
+  php_log_err("php5-gdal: CPLGetLastErrorNo");
   RETURN_LONG(CPLGetLastErrorNo());
 }
 
@@ -31,6 +33,7 @@ PHP_FUNCTION(cplgetlasterrortype)
   if (ZEND_NUM_ARGS() != 0) {
     WRONG_PARAM_COUNT;
   }
+  php_log_err("php5-gdal: CPLGetLastErrorType");
   RETURN_LONG(CPLGetLastErrorType());
 }
 
@@ -43,8 +46,12 @@ PHP_FUNCTION(cplgetlasterrormsg)
     WRONG_PARAM_COUNT;
   }
 
-  if ((pszMsg = CPLGetLastErrorMsg()) != NULL)
+  php_log_err("php5-gdal: CPLGetLastErrorMsg");
+  if ((pszMsg = CPLGetLastErrorMsg()) != NULL) {
     RETURN_STRING((char *)pszMsg, 1);
+  } else {
+    RETURN_NULL();
+  }
 }
 
 
@@ -60,6 +67,7 @@ PHP_FUNCTION(cplsetconfigoption)
                             &value, &value_len) == FAILURE)
     return;
 
+  php_log_err("php5-gdal: CPLSetConfigOption");
   CPLSetConfigOption(key, value);
 }
 
@@ -77,32 +85,27 @@ PHP_FUNCTION(cplgetconfigoption)
                             &_default, &_default_len) == FAILURE)
     return;
 
+  php_log_err("php5-gdal: CPLGetConfigOption");
   value = CPLGetConfigOption(key, _default);
-  RETURN_STRING((char *)value, 1);
+  if (value) {
+    RETURN_STRING((char *)value, 1);
+  } else {
+    RETURN_NULL();
+  }
 }
 
+# define CPLE_CONST_FLAG CONST_CS | CONST_PERSISTENT
 void php_gdal_cpl_startup(INIT_FUNC_ARGS)
 {
-  REGISTER_LONG_CONSTANT("CPLE_None", CPLE_None,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_AppDefined", CPLE_AppDefined,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_OutOfMemory", CPLE_OutOfMemory,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_FileIO", CPLE_FileIO,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_OpenFailed", CPLE_OpenFailed,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_IllegalArg", CPLE_IllegalArg,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_NotSupported", CPLE_NotSupported,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_AssertionFailed", CPLE_AssertionFailed,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_NoWriteAccess", CPLE_NoWriteAccess,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_UserInterrupt", CPLE_UserInterrupt,
-                         CONST_CS | CONST_PERSISTENT);
-  REGISTER_LONG_CONSTANT("CPLE_ObjectNull", CPLE_ObjectNull,
-                         CONST_CS | CONST_PERSISTENT);
+  REGISTER_LONG_CONSTANT("CPLE_None", CPLE_None, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_AppDefined", CPLE_AppDefined, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_OutOfMemory", CPLE_OutOfMemory, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_FileIO", CPLE_FileIO, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_OpenFailed", CPLE_OpenFailed, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_IllegalArg", CPLE_IllegalArg, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_NotSupported", CPLE_NotSupported, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_AssertionFailed", CPLE_AssertionFailed, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_NoWriteAccess", CPLE_NoWriteAccess, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_UserInterrupt", CPLE_UserInterrupt, CPLE_CONST_FLAG);
+  REGISTER_LONG_CONSTANT("CPLE_ObjectNull", CPLE_ObjectNull, CPLE_CONST_FLAG);
 }

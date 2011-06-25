@@ -15,13 +15,8 @@ zend_object_handlers ogrdatasource_object_handlers;
 void php_gdal_ogrdatasource_add_to_hash(php_ogrdatasource_object *obj)
 {
   ////
-  char *msg;
   HashPosition pos;
 
-  // asprintf(&msg, "php5-gdal: ogrdatasource_add_to_hash");
-  // php_log_err(msg);
-  // free(msg);
-  ////
   zend_hash_next_index_insert(&GDAL_G(ogrDataSources),
                               &(obj->datasource),
                               sizeof(obj->datasource), NULL);
@@ -32,10 +27,10 @@ void php_gdal_ogrdatasource_add_to_hash(php_ogrdatasource_object *obj)
     php_log_err("php5-gdal: failed to get hash index for datasource");
   }
   ////
-  asprintf(&msg, "php5-gdal: got OGR datasource hash index: %d",
-           (int)obj->hashIndex);
+  char msg[500];
+  sprintf(msg, "php5-gdal: got OGR datasource hash index: %d",
+          (int)obj->hashIndex);
   php_log_err(msg);
-  free(msg);
   ////
   //zend_hash_num_elements
 }
@@ -162,15 +157,13 @@ PHP_METHOD(OGRDataSource, GetLayer)
     RETURN_NULL();
   }
   ////
-  char *msg; int i2;
+  char msg[500]; int i2;
   i2 = datasource->GetRefCount();
-  asprintf(&msg, "OGRDataSource::GetLayer bef=%d aft=%d", i, i2);
+  sprintf(msg, "OGRDataSource::GetLayer bef=%d aft=%d", i, i2);
   php_log_err(msg);
-  free(msg);
   i = layer->GetRefCount();
-  asprintf(&msg, "OGRDataSource::GetLayer layerrefC=%d", i);
+  sprintf(msg, "OGRDataSource::GetLayer layerrefC=%d", i);
   php_log_err(msg);
-  free(msg);
   ////
   if (object_init_ex(return_value, gdal_ogrlayer_ce) != SUCCESS) {
     RETURN_NULL();
@@ -203,15 +196,13 @@ PHP_METHOD(OGRDataSource, GetLayerByName)
     RETURN_NULL();
   }
   ////
-  char *msg; int i2;
+  char msg[500]; int i2;
   i2 = datasource->GetRefCount();
-  asprintf(&msg, "OGRDataSource::GetLayerByName bef=%d aft=%d", i, i2);
+  sprintf(msg, "OGRDataSource::GetLayerByName bef=%d aft=%d", i, i2);
   php_log_err(msg);
-  free(msg);
   i = layer->GetRefCount();
-  asprintf(&msg, "OGRDataSource::GetLayer layerrefC=%d", i);
+  sprintf(msg, "OGRDataSource::GetLayer layerrefC=%d", i);
   php_log_err(msg);
-  free(msg);
   ////
   if (object_init_ex(return_value, gdal_ogrlayer_ce) != SUCCESS) {
     RETURN_NULL();
@@ -407,10 +398,9 @@ PHP_METHOD(OGRDataSource, Close)
   datasource = obj->datasource;
 
   ////
-  char *msg;
-  asprintf(&msg, "OGRDataSource::DestroyDataSource %x", datasource);
+  char msg[500];
+  sprintf(msg, "OGRDataSource::DestroyDataSource %x", datasource);
   php_log_err(msg);
-  free(msg);
   ////
   //OGRDataSource::DestroyDataSource(datasource);
 }
