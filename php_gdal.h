@@ -21,7 +21,7 @@
 #define PHP_GDAL_H
 
 #define PHP_GDAL_EXTNAME  "gdal"
-#define PHP_GDAL_EXTVER   "0.1"
+#define PHP_GDAL_EXTVER   "0.3"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
