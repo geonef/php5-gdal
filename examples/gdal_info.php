@@ -1,8 +1,11 @@
 <?php
-
+//
 // In this example, GDAL is used to get basic information about a particular
 // raster dataset given in argument.
-
+//
+// Note: this is a minimal example which has nothing to do
+// with the 'gdalinfo' program.
+//
 
 function showInfo(GDALDataSet $dataset)
 {
