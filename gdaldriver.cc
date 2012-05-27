@@ -231,6 +231,7 @@ PHP_METHOD(GDALDriver, QuietDelete)
   RETURN_LONG(driver->QuietDelete(name));
 }
 
+#if GDAL_VERSION_NUM >= 1800
 PHP_METHOD(GDALDriver, DefaultRename)
 {
   GDALDriver *driver;
@@ -272,7 +273,7 @@ PHP_METHOD(GDALDriver, DefaultCopyFiles)
   driver = obj->driver;
   RETURN_LONG(driver->DefaultCopyFiles(name, name2));
 }
-
+#endif
 //
 // PHP stuff
 //
@@ -290,8 +291,11 @@ function_entry gdaldriver_methods[] = {
   // PHP_ME(GDALDriver, DefaultCreateCopy, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriver, DefaultCopyMasks, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriver, QuietDelete, NULL, ZEND_ACC_PUBLIC)
+
+#if GDAL_VERSION_NUM > 1800
   PHP_ME(GDALDriver, DefaultRename, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriver, DefaultCopyFiles, NULL, ZEND_ACC_PUBLIC)
+#endif
   {NULL, NULL, NULL}
 };
 
