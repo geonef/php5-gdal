@@ -1,6 +1,8 @@
 #include "php.h"
 #include "php_gdal.h"
 #include <ogr_core.h>
+#include <cpl_conv.h>
+#include <cpl_string.h>
 #include "ogrexception.h"
 #include "ogrgeometry.h"
 
@@ -80,6 +82,7 @@ PHP_METHOD(OGRGeometry, ExportToWkt)
   RETURN_STRING(ret, 0);
 }
 
+
 PHP_METHOD(OGRGeometry, ExportToWkb)
 {
   OGRGeometry *geometry;
@@ -92,11 +95,13 @@ PHP_METHOD(OGRGeometry, ExportToWkb)
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
           &wkbByteOrder) == FAILURE) {
       php_gdal_ogr_throw("Illegal value for byteOrder");
+      RETURN_EMPTY_STRING();
     }
   }
 
   if ((wkbByteOrder) != wkbNDR && (wkbByteOrder != wkbXDR)) {
       php_gdal_ogr_throw("Illegal value for byteOrder. Has to be either wkbNDR or wkbXDR");
+      RETURN_EMPTY_STRING();
   }
 
   obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -113,12 +118,107 @@ PHP_METHOD(OGRGeometry, ExportToWkb)
   RETURN_STRINGL(buffer, wkbSize+1, 0);
 }
 
+PHP_METHOD(OGRGeometry, ExportToJson)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+  char *jsonText;
+  char *ret;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+
+  jsonText = geometry->exportToJson();
+  if (jsonText == NULL) {
+    php_gdal_ogr_throw("Failed to convert geometry to JSON");
+    RETURN_EMPTY_STRING();
+  }
+
+  ret = estrdup(jsonText);
+  CPLFree(jsonText);
+  RETURN_STRING(ret, 0);
+}
+
+
+PHP_METHOD(OGRGeometry, ExportToKML)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+  char *kmlText;
+  char *ret;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+
+  kmlText = geometry->exportToKML();
+  if (kmlText == NULL) {
+    php_gdal_ogr_throw("Failed to convert geometry to KML");
+    RETURN_EMPTY_STRING();
+  }
+
+  ret = estrdup(kmlText);
+  CPLFree(kmlText);
+  RETURN_STRING(ret, 0);
+}
+
+
+PHP_METHOD(OGRGeometry, ExportToGML)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+  char *gmlText;
+  char *ret;
+  char *gmlOptions = NULL;
+  int gmlOptionsLen;
+  char **papszOptions = NULL;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &gmlOptions, &gmlOptionsLen) == FAILURE) {
+      php_gdal_ogr_throw("Illegal value for GML format options");
+      RETURN_EMPTY_STRING();
+    }
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+
+  if (gmlOptionsLen != 0) {
+    papszOptions = CSLAddString(papszOptions, gmlOptions);
+  } 
+
+  gmlText = geometry->exportToGML(papszOptions);
+  if (papszOptions) {
+    CSLDestroy(papszOptions);
+  }
+  if (gmlText == NULL) {
+    php_gdal_ogr_throw("Failed to convert geometry to GML");
+    RETURN_EMPTY_STRING();
+  }
+
+  ret = estrdup(gmlText);
+  CPLFree(gmlText);
+  RETURN_STRING(ret, 0);
+}
+
+
+
 
 
 function_entry ogrgeometry_methods[] = {
   PHP_ME(OGRGeometry, IsValid, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToWkt, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToWkb, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, ExportToJson, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, ExportToKML, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, ExportToGML, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 
