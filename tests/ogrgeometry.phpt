@@ -25,9 +25,11 @@ echo $feature->getFieldAsString($idxName)."\n";
 $geom = $feature->GetGeometryRef();
 var_dump($geom);
 echo "OGRGeometry->IsValid: " . $geom->IsValid() . "\n";
+echo "OGRGeometry->ExportToWkt: " . $geom->ExportToWkt() . "\n";
 ?>
 --EXPECT--
 First Point
 object(OGRGeometry)#4 (0) {
 }
 OGRGeometry->IsValid: 1
+OGRGeometry->ExportToWkt: POINT (-28 35)

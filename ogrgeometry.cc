@@ -1,7 +1,7 @@
-
 #include "php.h"
 #include "php_gdal.h"
 #include <ogr_core.h>
+#include "ogrexception.h"
 #include "ogrgeometry.h"
 
 zend_class_entry *gdal_ogrgeometry_ce;
@@ -52,14 +52,41 @@ PHP_METHOD(OGRGeometry, IsValid)
 
   obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
   geometry = obj->geometry;
-
   RETURN_BOOL(geometry->IsValid());
 }
+
+
+PHP_METHOD(OGRGeometry, ExportToWkt)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+  char *ppszDstText;
+  char *ret;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+
+  if (geometry->exportToWkt(&ppszDstText) != OGRERR_NONE) {
+    php_gdal_ogr_throw("Failed to convert geometry to WKT");
+    RETURN_EMPTY_STRING();
+  }
+
+  ret = estrdup(ppszDstText);
+  OGRFree(ppszDstText);
+  RETURN_STRING(ret, 0);
+}
+
+
 
 
 
 function_entry ogrgeometry_methods[] = {
   PHP_ME(OGRGeometry, IsValid, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, ExportToWkt, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 

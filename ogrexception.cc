@@ -22,5 +22,6 @@ void php_gdal_ogr_throw_error_with_message(int error_code, char *error_message, 
   (void *) strict_error;
   zend_throw_exception(gdal_ogrexception_ce, error_message, error_code TSRMLS_CC);
 }   
+
 /* VIM settings */
 /* ex: set tabstop=2 expandtab shiftwidth=2 smartindent */
