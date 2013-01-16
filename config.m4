@@ -86,5 +86,5 @@ if test "$PHP_GDAL" != "no"; then
   PHP_NEW_EXTENSION(gdal, php_gdal.cc gdal_main.cc cpl.cc ogr.cc ogrsfdriverregistrar.cc ogrsfdriver.cc \
             ogrdatasource.cc ogrlayer.cc ogrgeometry.cc ogrfeaturedefn.cc ogrfielddefn.cc ogrenvelope.cc \
             ogrspatialreference.cc ogrcoordtransform.cc ogrfeature.cc gdaldrivermanager.cc gdaldriver.cc \
-            gdaldataset.cc, $ext_shared)
+            gdaldataset.cc ogrexception.cc, $ext_shared)
 fi
