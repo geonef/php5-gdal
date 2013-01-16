@@ -80,13 +80,45 @@ PHP_METHOD(OGRGeometry, ExportToWkt)
   RETURN_STRING(ret, 0);
 }
 
+PHP_METHOD(OGRGeometry, ExportToWkb)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+  int wkbSize;
+  char * buffer;
+  int wkbByteOrder = wkbNDR; // use as default when no byteOrder is specified
 
+  if (ZEND_NUM_ARGS() != 0) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+          &wkbByteOrder) == FAILURE) {
+      php_gdal_ogr_throw("Illegal value for byteOrder");
+    }
+  }
+
+  if ((wkbByteOrder) != wkbNDR && (wkbByteOrder != wkbXDR)) {
+      php_gdal_ogr_throw("Illegal value for byteOrder. Has to be either wkbNDR or wkbXDR");
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+
+  wkbSize = geometry->WkbSize();
+  buffer = (char*)ecalloc(sizeof(char), wkbSize+1);
+
+  if (geometry->exportToWkb(wkbNDR, (unsigned char*)buffer) != OGRERR_NONE) {
+    php_gdal_ogr_throw("Failed to convert geometry to WKB");
+    RETURN_EMPTY_STRING();
+  }
+
+  RETURN_STRINGL(buffer, wkbSize+1, 0);
+}
 
 
 
 function_entry ogrgeometry_methods[] = {
   PHP_ME(OGRGeometry, IsValid, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToWkt, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, ExportToWkb, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 
