@@ -118,6 +118,7 @@ PHP_METHOD(OGRGeometry, ExportToWkb)
   RETURN_STRINGL(buffer, wkbSize+1, 0);
 }
 
+
 PHP_METHOD(OGRGeometry, ExportToJson)
 {
   OGRGeometry *geometry;
@@ -207,6 +208,7 @@ PHP_METHOD(OGRGeometry, ExportToGML)
   CPLFree(gmlText);
   RETURN_STRING(ret, 0);
 }
+
 
 
 
