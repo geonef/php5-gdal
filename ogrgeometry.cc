@@ -210,7 +210,54 @@ PHP_METHOD(OGRGeometry, ExportToGML)
 }
 
 
+PHP_METHOD(OGRGeometry, GetGeometryName)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+  char *ret;
+  const char *geomName;
 
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+
+  geomName = geometry->getGeometryName();
+  ret = estrdup(geomName);
+  RETURN_STRING(ret, 0);
+}
+
+
+PHP_METHOD(OGRGeometry, GetGeometryType)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+  RETURN_LONG(geometry->getGeometryType());
+}
+
+
+PHP_METHOD(OGRGeometry, IsEmpty)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+  RETURN_BOOL(geometry->IsEmpty());
+}
 
 
 
@@ -221,6 +268,9 @@ function_entry ogrgeometry_methods[] = {
   PHP_ME(OGRGeometry, ExportToJson, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToKML, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToGML, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, GetGeometryName, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, GetGeometryType, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, IsEmpty, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 

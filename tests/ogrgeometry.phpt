@@ -22,9 +22,15 @@ $idxName = $feature->GetFieldIndex("name");
 assert(!is_null($idxName));
 echo $feature->getFieldAsString($idxName)."\n";
 
+function bool2string($b) {
+    return $b ? "TRUE" : "FALSE";
+}
+
 $geom = $feature->GetGeometryRef();
 var_dump($geom);
-echo "OGRGeometry->IsValid: " . $geom->IsValid() . "\n";
+echo "OGRGeometry->IsValid: " . bool2string($geom->IsValid()) . "\n";
+echo "OGRGeometry->GetGeometryName: " . $geom->GetGeometryName() . "\n";
+echo "OGRGeometry->GetGeometryType: is wktPoint -> " . bool2string($geom->GetGeometryType() === wkbPoint) . "\n";
 echo "OGRGeometry->ExportToWkt: " . $geom->ExportToWkt() . "\n";
 echo "OGRGeometry->ExportToWkb (bin2hex): " . bin2hex($geom->ExportToWkb()) . "\n";
 try {
@@ -41,12 +47,15 @@ echo "OGRGeometry->ExportToJson: " . json_encode(json_decode($geom->ExportToJson
 echo "OGRGeometry->ExportToKML: " . $geom->ExportToKML() . "\n";
 echo "OGRGeometry->ExportToGML: " . $geom->ExportToGML() . "\n";
 echo "OGRGeometry->ExportToGML (GML3): " . $geom->ExportToGML("FORMAT=GML3") . "\n";
+echo "OGRGeometry->IsEmpty: " . bool2string($geom->IsEmpty()) . "\n";
 ?>
 --EXPECT--
 First Point
 object(OGRGeometry)#4 (0) {
 }
-OGRGeometry->IsValid: 1
+OGRGeometry->IsValid: TRUE
+OGRGeometry->GetGeometryName: POINT
+OGRGeometry->GetGeometryType: is wktPoint -> TRUE
 OGRGeometry->ExportToWkt: POINT (-28 35)
 OGRGeometry->ExportToWkb (bin2hex): 01010000000000000000003cc0000000000080414000
 OGRException on illegal byteorder caught.
@@ -54,4 +63,4 @@ OGRGeometry->ExportToJson: {"type":"Point","coordinates":[-28,35]}
 OGRGeometry->ExportToKML: <Point><coordinates>-28,35</coordinates></Point>
 OGRGeometry->ExportToGML: <gml:Point><gml:coordinates>-28,35</gml:coordinates></gml:Point>
 OGRGeometry->ExportToGML (GML3): <gml:Point><gml:pos>-28 35</gml:pos></gml:Point>
-
+OGRGeometry->IsEmpty: FALSE

@@ -17,7 +17,7 @@ void php_gdal_ogrexception_startup(INIT_FUNC_ARGS)
   gdal_ogrexception_ce = zend_register_internal_class_ex(&ce, zend_exception_get_default(TSRMLS_C), NULL TSRMLS_CC);
 }
 
-void php_gdal_ogr_throw_error_with_message(int error_code, char *error_message, int strict_error TSRMLS_DC) /* {{{ */
+void php_gdal_ogr_throw_error_with_message(int error_code, char *error_message, int strict_error TSRMLS_DC)
 {
   (void *) strict_error;
   zend_throw_exception(gdal_ogrexception_ce, error_message, error_code TSRMLS_CC);
