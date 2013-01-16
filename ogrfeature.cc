@@ -27,6 +27,7 @@
 #include "php_gdal.h"
 #include <ogr_feature.h>
 #include "ogrfeature.h"
+#include "ogrgeometry.h"
 #include "ogrfeaturedefn.h"
 #include "ogrfielddefn.h"
 
@@ -347,6 +348,36 @@ PHP_METHOD(OGRFeature, CreateFeature)
   feature_obj->feature = feature;
 }
 
+
+PHP_METHOD(OGRFeature, GetGeometryRef)
+{
+  OGRFeature *feature;
+  OGRGeometry *geometry;
+  php_ogrfeature_object *obj;
+  php_ogrgeometry_object *geom_obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  geometry = feature->GetGeometryRef();
+
+  if (!geometry) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_ogrgeometry_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  // php_log_err("FILE:" __FILE__ " LINE:" STRINGIFY(__LINE__) "\n");
+  geom_obj = (php_ogrgeometry_object*) zend_object_store_get_object(return_value TSRMLS_CC);
+  geom_obj->geometry = geometry;
+}
+
+
 PHP_METHOD(OGRFeature, DestroyFeature)
 {
   OGRFeature *feature;
@@ -374,7 +405,7 @@ function_entry ogrfeature_methods[] = {
   PHP_ME(OGRFeature, GetDefnRef, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, SetGeometryDirectly, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, SetGeometry, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, GetGeometryRef, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, GetGeometryRef, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, StealGeometry, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, Clone, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, Equal, NULL, ZEND_ACC_PUBLIC)

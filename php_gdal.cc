@@ -46,6 +46,7 @@
 #include "ogrfeaturedefn.h"
 #include "ogrfielddefn.h"
 #include "ogrenvelope.h"
+#include "ogrgeometry.h"
 #include "ogrspatialreference.h"
 #include "ogrcoordtransform.h"
 #include "ogrfeature.h"
@@ -173,6 +174,7 @@ PHP_MINIT_FUNCTION(gdal)
   php_gdal_ogrfeaturedefn_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrfielddefn_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrenvelope_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_ogrgeometry_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrspatialreference_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrcoordtransform_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrfeature_startup(INIT_FUNC_ARGS_PASSTHRU);
