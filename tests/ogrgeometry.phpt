@@ -24,9 +24,10 @@ echo $feature->getFieldAsString($idxName)."\n";
 
 $geom = $feature->GetGeometryRef();
 var_dump($geom);
+echo "OGRGeometry->IsValid: " . $geom->IsValid() . "\n";
 ?>
 --EXPECT--
 First Point
 object(OGRGeometry)#4 (0) {
 }
-
+OGRGeometry->IsValid: 1

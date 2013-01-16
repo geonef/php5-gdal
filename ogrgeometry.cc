@@ -41,7 +41,25 @@ zend_object_value ogrgeometry_create_handler(zend_class_entry *type TSRMLS_DC)
 }
 
 
+PHP_METHOD(OGRGeometry, IsValid)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    return;
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+
+  RETURN_BOOL(geometry->IsValid());
+}
+
+
+
 function_entry ogrgeometry_methods[] = {
+  PHP_ME(OGRGeometry, IsValid, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 
@@ -56,3 +74,6 @@ void php_gdal_ogrgeometry_startup(INIT_FUNC_ARGS)
          zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   ogrgeometry_object_handlers.clone_obj = NULL;
 }
+
+/* VIM settings */
+/* ex: set tabstop=2 expandtab shiftwidth=2 smartindent */
