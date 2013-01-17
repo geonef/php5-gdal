@@ -4,6 +4,7 @@
 #include <cpl_conv.h>
 #include <cpl_string.h>
 #include "ogrexception.h"
+#include "ogrspatialreference.h"
 #include "ogrgeometry.h"
 
 zend_class_entry *gdal_ogrgeometry_ce;
@@ -182,7 +183,7 @@ PHP_METHOD(OGRGeometry, ExportToGML)
   char **papszOptions = NULL;
 
   if (ZEND_NUM_ARGS() != 0) {
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &gmlOptions, &gmlOptionsLen) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s", &gmlOptions, &gmlOptionsLen) == FAILURE) {
       php_gdal_ogr_throw("Illegal value for GML format options");
       RETURN_EMPTY_STRING();
     }
@@ -260,6 +261,32 @@ PHP_METHOD(OGRGeometry, IsEmpty)
 }
 
 
+PHP_METHOD(OGRGeometry, GetSpatialReference)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+  OGRSpatialReference *spatialreference;
+  php_ogrspatialreference_object *spatialreference_obj;
+
+  if (ZEND_NUM_ARGS() != 0) {
+    WRONG_PARAM_COUNT;
+  }
+
+  obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+  geometry = obj->geometry;
+
+  spatialreference = geometry->getSpatialReference();
+  if (!spatialreference) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_ogrspatialreference_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  spatialreference_obj = (php_ogrspatialreference_object*) zend_objects_get_address(return_value TSRMLS_CC);
+  spatialreference_obj->spatialreference = spatialreference;
+}
+
+
 
 function_entry ogrgeometry_methods[] = {
   PHP_ME(OGRGeometry, IsValid, NULL, ZEND_ACC_PUBLIC)
@@ -271,6 +298,7 @@ function_entry ogrgeometry_methods[] = {
   PHP_ME(OGRGeometry, GetGeometryName, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, GetGeometryType, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, IsEmpty, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRGeometry, GetSpatialReference, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 
@@ -285,6 +313,7 @@ void php_gdal_ogrgeometry_startup(INIT_FUNC_ARGS)
          zend_get_std_object_handlers(), sizeof(zend_object_handlers));
   ogrgeometry_object_handlers.clone_obj = NULL;
 }
+
 
 /* VIM settings */
 /* ex: set tabstop=2 expandtab shiftwidth=2 smartindent */

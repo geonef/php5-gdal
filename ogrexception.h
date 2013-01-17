@@ -15,7 +15,7 @@ struct php_ogrexception_object {
 
 void php_gdal_ogrexception_startup(INIT_FUNC_ARGS);
 
-void php_gdal_ogr_throw_error_with_message(int error_code, char *error_message, int strict_error TSRMLS_DC);
+void php_gdal_ogr_throw_error_with_message(int error_code, const char *error_message, int strict_error TSRMLS_DC);
 
 #define php_gdal_ogr_throw(MSG) php_gdal_ogr_throw_error_with_message(0, MSG, 1)
 
