@@ -28,6 +28,10 @@
 #define PHP_GDAL_EXTNAME  "gdal"
 #define PHP_GDAL_EXTVER   "0.3"
 
+// these two macros convert macro values to strings
+#define STRINGIFY2(x)   #x
+#define STRINGIFY(x)    STRINGIFY2(x)
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
