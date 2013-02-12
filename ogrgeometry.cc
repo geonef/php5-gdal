@@ -192,14 +192,22 @@ PHP_METHOD(OGRGeometry, ExportToGML)
   obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
   geometry = obj->geometry;
 
+#if ! ((GDAL_VERSION_MAJOR <= 1) && (GDAL_VERSION_MINOR < 8))
   if (gmlOptionsLen != 0) {
     papszOptions = CSLAddString(papszOptions, gmlOptions);
   } 
 
   gmlText = geometry->exportToGML(papszOptions);
+#else
+  gmlText = geometry->exportToGML();
+#endif
+
+#if ! ((GDAL_VERSION_MAJOR <= 1) && (GDAL_VERSION_MINOR < 8))
   if (papszOptions) {
     CSLDestroy(papszOptions);
   }
+#endif
+
   if (gmlText == NULL) {
     php_gdal_ogr_throw("Failed to convert geometry to GML");
     RETURN_EMPTY_STRING();
