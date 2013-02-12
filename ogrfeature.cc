@@ -401,7 +401,7 @@ PHP_METHOD(OGRFeature, DestroyFeature)
 // PHP stuff
 //
 
-function_entry ogrfeature_methods[] = {
+zend_function_entry ogrfeature_methods[] = {
   PHP_ME(OGRFeature, GetDefnRef, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, SetGeometryDirectly, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, SetGeometry, NULL, ZEND_ACC_PUBLIC)

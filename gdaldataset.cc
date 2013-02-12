@@ -336,7 +336,7 @@ PHP_METHOD(GDALDataset, MarkAsShared)
 // PHP stuff
 //
 
-function_entry gdaldataset_methods[] = {
+zend_function_entry gdaldataset_methods[] = {
   PHP_ME(GDALDataset, GetRasterXSize, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDataset, GetRasterYSize, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDataset, GetRasterCount, NULL, ZEND_ACC_PUBLIC)

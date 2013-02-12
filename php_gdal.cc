@@ -374,7 +374,7 @@ PHP_MINFO_FUNCTION(gdal)
   DISPLAY_INI_ENTRIES();
 }
 
-static function_entry gdal_functions[] = {
+static zend_function_entry gdal_functions[] = {
   PHP_FE(cplerrorreset, NULL)
   PHP_FE(cplgetlasterrorno, NULL)
   PHP_FE(cplgetlasterrortype, NULL)

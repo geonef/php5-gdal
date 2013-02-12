@@ -247,7 +247,7 @@ PHP_METHOD(OGRFieldDefn, SetPrecision)
 // PHP stuff
 //
 
-function_entry ogrfielddefn_methods[] = {
+zend_function_entry ogrfielddefn_methods[] = {
   PHP_ME(OGRFieldDefn, SetName,                 NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFieldDefn, GetNameRef,              NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFieldDefn, GetType,                 NULL, ZEND_ACC_PUBLIC)

@@ -304,7 +304,7 @@ PHP_METHOD(OGRFeatureDefn, Release)
 // PHP stuff
 //
 
-function_entry ogrfeaturedefn_methods[] = {
+zend_function_entry ogrfeaturedefn_methods[] = {
   PHP_ME(OGRFeatureDefn, GetName,               NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFeatureDefn, GetFieldCount,         NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFeatureDefn, GetFieldDefn,          NULL, ZEND_ACC_PUBLIC)

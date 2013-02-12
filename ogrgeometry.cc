@@ -288,7 +288,7 @@ PHP_METHOD(OGRGeometry, GetSpatialReference)
 
 
 
-function_entry ogrgeometry_methods[] = {
+zend_function_entry ogrgeometry_methods[] = {
   PHP_ME(OGRGeometry, IsValid, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToWkt, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToWkb, NULL, ZEND_ACC_PUBLIC)

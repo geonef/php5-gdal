@@ -633,7 +633,7 @@ PHP_METHOD(OGRLayer, GetFeaturesRead)
 // PHP stuff
 //
 
-function_entry ogrlayer_methods[] = {
+zend_function_entry ogrlayer_methods[] = {
   // PHP_ME(OGRLayer, GetSpatialFilter,            NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRLayer, SetSpatialFilter,            NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRLayer, SetSpatialFilterRect,        NULL, ZEND_ACC_PUBLIC)

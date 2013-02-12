@@ -300,7 +300,7 @@ PHP_METHOD(GDALDriverManager, SetHome)
 // PHP stuff
 //
 
-function_entry gdaldrivermanager_methods[] = {
+zend_function_entry gdaldrivermanager_methods[] = {
   PHP_ME(GDALDriverManager, GetDriverCount, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriverManager, GetDriver, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriverManager, GetDriverByName, NULL, ZEND_ACC_PUBLIC)

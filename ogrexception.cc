@@ -6,7 +6,7 @@
 zend_class_entry *gdal_ogrexception_ce;
 zend_object_handlers ogrexception_object_handlers;
 
-function_entry ogrexception_methods[] = {
+zend_function_entry ogrexception_methods[] = {
   {NULL, NULL, NULL}
 };
 

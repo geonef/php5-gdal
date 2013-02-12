@@ -278,7 +278,7 @@ PHP_METHOD(GDALDriver, DefaultCopyFiles)
 // PHP stuff
 //
 
-function_entry gdaldriver_methods[] = {
+zend_function_entry gdaldriver_methods[] = {
   //-- parent class
   PHP_ME(GDALDriver, GetDescription, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriver, SetDescription, NULL, ZEND_ACC_PUBLIC)

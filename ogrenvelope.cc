@@ -294,7 +294,7 @@ PHP_METHOD(OGREnvelope, AsArray)
 // PHP stuff
 //
 
-function_entry ogrenvelope_methods[] = {
+zend_function_entry ogrenvelope_methods[] = {
   PHP_ME(OGREnvelope, IsInit, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGREnvelope, Merge, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGREnvelope, MergeCoords, NULL, ZEND_ACC_PUBLIC)

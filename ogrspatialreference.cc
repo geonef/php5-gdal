@@ -754,7 +754,7 @@ PHP_METHOD(OGRSpatialReference, GetAuthorityName)
 // PHP stuff
 //
 
-function_entry ogrspatialreference_methods[] = {
+zend_function_entry ogrspatialreference_methods[] = {
   PHP_ME(OGRSpatialReference, __construct, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSpatialReference, Reference, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSpatialReference, Dereference, NULL, ZEND_ACC_PUBLIC)

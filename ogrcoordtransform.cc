@@ -322,7 +322,7 @@ PHP_METHOD(OGRCoordinateTransformation, TransformEx)
 ZEND_BEGIN_ARG_INFO(arginfo_transform_methods, 1)
 ZEND_END_ARG_INFO();
 
-function_entry ogrcoordtransform_methods[] = {
+zend_function_entry ogrcoordtransform_methods[] = {
   PHP_ME(OGRCoordinateTransformation, __construct, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRCoordinateTransformation, GetSourceCS, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRCoordinateTransformation, GetTargetCS, NULL, ZEND_ACC_PUBLIC)

@@ -310,7 +310,7 @@ PHP_METHOD(OGRSFDriverRegistrar, Open)
 // PHP stuff
 //
 
-function_entry ogrsfdriverregistrar_methods[] = {
+zend_function_entry ogrsfdriverregistrar_methods[] = {
   // despite the API web page, there is no DeregisterDriver()
   PHP_ME(OGRSFDriverRegistrar,  RegisterDriver,  NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriverRegistrar,  GetDriverCount,  NULL, ZEND_ACC_PUBLIC)

@@ -456,7 +456,7 @@ PHP_METHOD(OGRDataSource, DestroyDataSource)
 // PHP stuff
 //
 
-function_entry ogrdatasource_methods[] = {
+zend_function_entry ogrdatasource_methods[] = {
   PHP_ME(OGRDataSource, GetName, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, GetLayerCount, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRDataSource, GetLayer, NULL, ZEND_ACC_PUBLIC)

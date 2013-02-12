@@ -116,7 +116,7 @@ PHP_METHOD(OGRSFDriver, TestCapability)
 // PHP stuff
 //
 
-function_entry ogrsfdriver_methods[] = {
+zend_function_entry ogrsfdriver_methods[] = {
   PHP_ME(OGRSFDriver, GetName, NULL, ZEND_ACC_PUBLIC)
   //PHP_ME(OGRSFDriver, Open, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriver, TestCapability, NULL, ZEND_ACC_PUBLIC)
