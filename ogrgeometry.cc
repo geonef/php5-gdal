@@ -33,8 +33,12 @@ zend_object_value ogrgeometry_create_handler(zend_class_entry *type TSRMLS_DC)
 
   ALLOC_HASHTABLE(obj->std.properties);
   zend_hash_init(obj->std.properties, 0, NULL, ZVAL_PTR_DTOR, 0);
+#if PHP_VERSION_ID < 50399
   zend_hash_copy(obj->std.properties, &type->default_properties,
                  (copy_ctor_func_t)zval_add_ref, (void *)&tmp, sizeof(zval *));
+#else
+  object_properties_init(&obj->std, type);
+#endif
 
   retval.handle = zend_objects_store_put(obj, NULL,
                                          ogrgeometry_free_storage, NULL TSRMLS_CC);
@@ -192,14 +196,22 @@ PHP_METHOD(OGRGeometry, ExportToGML)
   obj = (php_ogrgeometry_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
   geometry = obj->geometry;
 
+#if ! ((GDAL_VERSION_MAJOR <= 1) && (GDAL_VERSION_MINOR < 8))
   if (gmlOptionsLen != 0) {
     papszOptions = CSLAddString(papszOptions, gmlOptions);
   } 
 
   gmlText = geometry->exportToGML(papszOptions);
+#else
+  gmlText = geometry->exportToGML();
+#endif
+
+#if ! ((GDAL_VERSION_MAJOR <= 1) && (GDAL_VERSION_MINOR < 8))
   if (papszOptions) {
     CSLDestroy(papszOptions);
   }
+#endif
+
   if (gmlText == NULL) {
     php_gdal_ogr_throw("Failed to convert geometry to GML");
     RETURN_EMPTY_STRING();
@@ -288,7 +300,7 @@ PHP_METHOD(OGRGeometry, GetSpatialReference)
 
 
 
-function_entry ogrgeometry_methods[] = {
+zend_function_entry ogrgeometry_methods[] = {
   PHP_ME(OGRGeometry, IsValid, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToWkt, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRGeometry, ExportToWkb, NULL, ZEND_ACC_PUBLIC)
