@@ -46,7 +46,6 @@ echo "OGRGeometry->ExportToJson: " . json_encode(json_decode($geom->ExportToJson
 
 echo "OGRGeometry->ExportToKML: " . $geom->ExportToKML() . "\n";
 echo "OGRGeometry->ExportToGML: " . $geom->ExportToGML() . "\n";
-echo "OGRGeometry->ExportToGML (GML3): " . $geom->ExportToGML("FORMAT=GML3") . "\n";
 echo "OGRGeometry->IsEmpty: " . bool2string($geom->IsEmpty()) . "\n";
 ?>
 --EXPECT--
@@ -62,5 +61,4 @@ OGRException on illegal byteorder caught.
 OGRGeometry->ExportToJson: {"type":"Point","coordinates":[-28,35]}
 OGRGeometry->ExportToKML: <Point><coordinates>-28,35</coordinates></Point>
 OGRGeometry->ExportToGML: <gml:Point><gml:coordinates>-28,35</gml:coordinates></gml:Point>
-OGRGeometry->ExportToGML (GML3): <gml:Point><gml:pos>-28 35</gml:pos></gml:Point>
 OGRGeometry->IsEmpty: FALSE
