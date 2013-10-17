@@ -102,7 +102,7 @@ static PHP_INI_MH(onIniChangeErrorHandler)
   // sprintf(msg, "php5-gdal: onIniChangeErrorHandler: %s", new_value);
   // php_log_err(msg);
 
-  CPLSetErrorHandler(atoi(new_value) ? errorHandler : NULL);
+  CPLSetErrorHandler(atoi(new_value) ? reinterpret_cast<CPLErrorHandler>(errorHandler) : NULL);
 
   return (SUCCESS);
 }
