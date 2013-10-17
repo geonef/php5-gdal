@@ -28,6 +28,7 @@
 
 #include "php.h"
 #include "ogrsf_frmts.h"
+#include "ogrdatasource.h"
 
 extern zend_class_entry *gdal_ogrsfdriver_ce;
 
