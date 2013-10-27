@@ -115,6 +115,37 @@ PHP_METHOD(OGRSFDriver, TestCapability)
   RETURN_BOOL(driver->TestCapability(strcapability));
 }
 
+PHP_METHOD(OGRSFDriver, CreateDataSource)
+{
+	OGRSFDriver *driver;
+	driver_object *obj;
+	OGRDataSource *datasource;
+	php_ogrdatasource_object *ds_obj;
+	char *name = NULL;
+	int name_len;
+	char **params = NULL;
+	int params_len;
+
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"ss",
+							&name, &name_len,
+							&params, &params_len) == FAILURE) {
+		WRONG_PARAM_COUNT;
+	}
+
+	obj = (driver_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
+	driver = obj->driver;
+
+	datasource = driver->CreateDataSource(name, params);
+	if (!datasource) {
+		RETURN_NULL();
+	}
+	if (object_init_ex(return_value, gdal_ogrdatasource_ce) != SUCCESS) {
+		RETURN_NULL();
+	}
+	ds_obj = (php_ogrdatasource_object*)
+		zend_objects_get_address(return_value TSRMLS_CC);
+	ds_obj->datasource = datasource;
+}
 
 //
 // PHP stuff
@@ -124,7 +155,7 @@ zend_function_entry ogrsfdriver_methods[] = {
   PHP_ME(OGRSFDriver, GetName, NULL, ZEND_ACC_PUBLIC)
   //PHP_ME(OGRSFDriver, Open, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRSFDriver, TestCapability, NULL, ZEND_ACC_PUBLIC)
-  //PHP_ME(OGRSFDriver, CreateDataSource, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRSFDriver, CreateDataSource, NULL, ZEND_ACC_PUBLIC)
   //PHP_ME(OGRSFDriver, DeleteDataSource, NULL, ZEND_ACC_PUBLIC)
   //PHP_ME(OGRSFDriver, CopyDataSource, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}

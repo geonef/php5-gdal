@@ -180,7 +180,8 @@ PHP_METHOD(GDALDriverManager, RegisterDriver)
   RETURN_LONG(drivermanager->RegisterDriver(driver));
 }
 
-PHP_METHOD(GDALDriverManager, MoveDriver)
+// commented out, because can't find MoveDriver method
+/*PHP_METHOD(GDALDriverManager, MoveDriver)
 {
   GDALDriverManager *drivermanager;
   GDALDriver *driver;
@@ -204,7 +205,7 @@ PHP_METHOD(GDALDriverManager, MoveDriver)
   driver = driver_obj->driver;
 
   drivermanager->MoveDriver(driver, i);
-}
+}*/
 
 PHP_METHOD(GDALDriverManager, DeregisterDriver)
 {
@@ -309,7 +310,8 @@ zend_function_entry gdaldrivermanager_methods[] = {
   PHP_ME(GDALDriverManager, GetDriver, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriverManager, GetDriverByName, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriverManager, RegisterDriver, NULL, ZEND_ACC_PUBLIC)
-  PHP_ME(GDALDriverManager, MoveDriver, NULL, ZEND_ACC_PUBLIC)
+  // commented out, because can't find MoveDriver method
+  //PHP_ME(GDALDriverManager, MoveDriver, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriverManager, DeregisterDriver, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriverManager, AutoLoadDrivers, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDriverManager, AutoSkipDrivers, NULL, ZEND_ACC_PUBLIC)
