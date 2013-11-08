@@ -77,6 +77,23 @@ zend_object_value ogrfielddefn_create_handler(zend_class_entry *type TSRMLS_DC)
 // CLASS METHODS
 //
 
+PHP_METHOD(OGRFieldDefn, __construct)
+{
+  php_ogrfielddefn_object *obj;
+  char *name;
+  int name_len;
+  long type;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"sl",
+                            &name, &name_len, &type) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrfielddefn_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  obj->fielddefn = new OGRFieldDefn(name, (OGRFieldType)type);
+}
+
 PHP_METHOD(OGRFieldDefn, SetName)
 {
   OGRFieldDefn *fielddefn;
@@ -252,6 +269,7 @@ PHP_METHOD(OGRFieldDefn, SetPrecision)
 //
 
 zend_function_entry ogrfielddefn_methods[] = {
+  PHP_ME(OGRFieldDefn, __construct,                 NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFieldDefn, SetName,                 NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFieldDefn, GetNameRef,              NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFieldDefn, GetType,                 NULL, ZEND_ACC_PUBLIC)
