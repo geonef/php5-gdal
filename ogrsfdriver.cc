@@ -121,12 +121,12 @@ PHP_METHOD(OGRSFDriver, CreateDataSource)
 	driver_object *obj;
 	OGRDataSource *datasource;
 	php_ogrdatasource_object *ds_obj;
-	char *name = NULL;
+	char *name;
 	int name_len;
 	char **params = NULL;
 	int params_len;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"ss",
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"s|s",
 							&name, &name_len,
 							&params, &params_len) == FAILURE) {
 		WRONG_PARAM_COUNT;
