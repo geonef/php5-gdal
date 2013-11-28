@@ -30,6 +30,7 @@
 #include "php_gdal.h"
 #include "gdaldataset.h"
 #include "gdaldriver.h"
+#include "gdalrasterband.h"
 
 zend_class_entry *gdal_gdaldataset_ce;
 zend_object_handlers gdaldataset_object_handlers;
@@ -128,6 +129,34 @@ PHP_METHOD(GDALDataset, GetRasterCount)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   dataset = obj->dataset;
   RETURN_LONG(dataset->GetRasterCount());
+}
+
+PHP_METHOD(GDALDataset, GetRasterBand)
+{
+  GDALDataset *dataset;
+  GDALRasterBand *rasterband;
+  php_gdaldataset_object *obj;
+  php_gdalrasterband_object *rasterband_obj;
+  long index;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"l",
+                            &index) == FAILURE) {
+    return;
+  }
+
+  obj = (php_gdaldataset_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  dataset = obj->dataset;
+  rasterband = dataset->GetRasterBand(index);
+  if (!rasterband) {
+    RETURN_NULL();
+  }
+  if (object_init_ex(return_value, gdal_gdalrasterband_ce) != SUCCESS) {
+    RETURN_NULL();
+  }
+  rasterband_obj = (php_gdalrasterband_object*)
+    zend_object_store_get_object(return_value TSRMLS_CC);
+  rasterband_obj->rasterband = rasterband;
 }
 
 PHP_METHOD(GDALDataset, FlushCache)
@@ -344,7 +373,7 @@ zend_function_entry gdaldataset_methods[] = {
   PHP_ME(GDALDataset, GetRasterXSize, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDataset, GetRasterYSize, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDataset, GetRasterCount, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(GDALDataset, GetRasterBand, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(GDALDataset, GetRasterBand, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDataset, FlushCache, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDataset, GetProjectionRef, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(GDALDataset, SetProjection, NULL, ZEND_ACC_PUBLIC)

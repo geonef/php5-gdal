@@ -8,7 +8,7 @@ ARG_ENABLE("gdal", "enable gdal support", "no");
 
 if (PHP_GDAL != "no") {
 	if (CHECK_LIB("gdal_i.lib", "gdal", PHP_GDAL) && CHECK_HEADER_ADD_INCLUDE("gdal.h", "CFLAGS_GDAL", PHP_GDAL + "\\include;" + PHP_PHP_BUILD + "\\include\\gdal;" + PHP_GDAL)) {
-		EXTENSION("gdal", "php_gdal.cc gdal_main.cc cpl.cc ogr.cc ogrsfdriverregistrar.cc ogrsfdriver.cc ogrdatasource.cc ogrlayer.cc ogrgeometry.cc ogrfeaturedefn.cc ogrfielddefn.cc ogrenvelope.cc ogrspatialreference.cc ogrcoordtransform.cc ogrfeature.cc gdaldrivermanager.cc gdaldriver.cc gdaldataset.cc ogrexception.cc");
+		EXTENSION("gdal", "php_gdal.cc gdal_main.cc cpl.cc ogr.cc ogrsfdriverregistrar.cc ogrsfdriver.cc ogrdatasource.cc ogrlayer.cc ogrgeometry.cc ogrfeaturedefn.cc ogrfielddefn.cc ogrenvelope.cc ogrspatialreference.cc ogrcoordtransform.cc ogrfeature.cc gdaldrivermanager.cc gdaldriver.cc gdaldataset.cc gdalrasterband.cc ogrexception.cc");
 		AC_DEFINE('HAVE_GDAL', 1, 'Have GDAL library');
 	}
 }

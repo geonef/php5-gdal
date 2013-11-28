@@ -51,6 +51,7 @@
 #include "ogrcoordtransform.h"
 #include "ogrfeature.h"
 #include "ogrexception.h"
+#include "gdalrasterband.h"
 
 static void errorHandler(CPLErr eErrClass, int err_no, const char *msg)
 {
@@ -168,6 +169,7 @@ PHP_MINIT_FUNCTION(gdal)
   php_gdal_gdaldrivermanager_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_gdaldriver_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_gdaldataset_startup(INIT_FUNC_ARGS_PASSTHRU);
+  php_gdal_gdalrasterband_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrsfdriverregistrar_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrsfdriver_startup(INIT_FUNC_ARGS_PASSTHRU);
   php_gdal_ogrdatasource_startup(INIT_FUNC_ARGS_PASSTHRU);
