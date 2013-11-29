@@ -18,7 +18,7 @@ zend_object_handlers gdalrasterband_object_handlers;
 // PHP stuff
 //
 
-void gdaldriver_free_storage(void *object TSRMLS_DC)
+void gdalrasterband_free_storage(void *object TSRMLS_DC)
 {
   char *msg;
   int i;
@@ -60,7 +60,7 @@ zend_object_value gdalrasterband_create_handler(zend_class_entry *type TSRMLS_DC
 
 }
 
-PHP_METHOD(GDALDataset, GetXSize)
+PHP_METHOD(GDALRasterBand, GetXSize)
 {
   GDALRasterBand *rasterband;
   php_gdalrasterband_object *obj;
