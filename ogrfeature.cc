@@ -261,6 +261,46 @@ PHP_METHOD(OGRFeature, GetFieldAsString)
   RETURN_STRING((char *)str, 1);
 }
 
+/* Basic support for integer, double, string and datetime. Could be extended if needed. */
+PHP_METHOD(OGRFeature, SetField)
+{
+  OGRFeature *feature;
+  php_ogrfeature_object *obj;
+  long idx;
+  zval *value;
+  long month;
+  long day;
+  long hour = 0;
+  long minute = 0;
+  long second = 0;
+  long tzFlag = 0;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"lz|llllll",
+                            &idx, &value, &month, &day, &hour, &minute, &second, &tzFlag) == FAILURE) {
+    return;
+  }
+  
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+  
+  if (ZEND_NUM_ARGS() == 2) {
+    switch (Z_TYPE_P(value)) {
+      case IS_LONG:
+        feature->SetField(idx, Z_LVAL_P(value));
+        break;
+      case IS_DOUBLE:
+        feature->SetField(idx, Z_DVAL_P(value));
+        break;
+      case IS_STRING:
+        feature->SetField(idx, Z_STRVAL_P(value));
+        break;
+    }
+  } else if (ZEND_NUM_ARGS() >= 4) {
+    feature->SetField(idx, Z_LVAL_P(value), month, day, hour, minute, second, tzFlag);
+  }
+}
+
 PHP_METHOD(OGRFeature, GetFID)
 {
   OGRFeature *feature;
@@ -352,6 +392,31 @@ PHP_METHOD(OGRFeature, CreateFeature)
   feature_obj->feature = feature;
 }
 
+PHP_METHOD(OGRFeature, SetGeometry)
+{
+  zval *ogrgeometryp;
+  php_ogrgeometry_object *geometry_obj;
+  OGRGeometry *geometry;
+  php_ogrfeature_object *obj;
+  OGRFeature *feature;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
+                            &ogrgeometryp, gdal_ogrgeometry_ce)
+      == FAILURE) {
+    return;
+  }
+  
+  geometry_obj = (php_ogrgeometry_object *)
+    zend_object_store_get_object(ogrgeometryp);
+  geometry = geometry_obj->geometry;
+
+  obj = (php_ogrfeature_object *)
+    zend_object_store_get_object(getThis() TSRMLS_CC);
+  feature = obj->feature;
+
+  RETURN_LONG(feature->SetGeometry(geometry));
+}
+
 
 PHP_METHOD(OGRFeature, GetGeometryRef)
 {
@@ -408,7 +473,7 @@ PHP_METHOD(OGRFeature, DestroyFeature)
 zend_function_entry ogrfeature_methods[] = {
   PHP_ME(OGRFeature, GetDefnRef, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, SetGeometryDirectly, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, SetGeometry, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(OGRFeature, SetGeometry, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFeature, GetGeometryRef, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, StealGeometry, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, Clone, NULL, ZEND_ACC_PUBLIC)
@@ -433,7 +498,7 @@ zend_function_entry ogrfeature_methods[] = {
   // PHP_ME(OGRFeature, GetFieldAsIntegerList, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, GetFieldAsDoubleList, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, GetFieldAsStringList, NULL, ZEND_ACC_PUBLIC)
-  // PHP_ME(OGRFeature, SetField, NULL, ZEND_ACC_PUBLIC) //
+  PHP_ME(OGRFeature, SetField, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFeature, GetFID, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(OGRFeature, SetFID, NULL, ZEND_ACC_PUBLIC)
   // PHP_ME(OGRFeature, DumpReadable, NULL, ZEND_ACC_PUBLIC)
