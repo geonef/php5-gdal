@@ -16,7 +16,7 @@ difficult, so feel free to add the ones you need.
 This module is UNSTABLE. Don't use it on production environment as it is.
 
 
-BUILD INSTRUCTIONS
+Build instructions
 ==================
 
 Some builds are available already from the [builds/](builds/) directory. There may be some suitable for your Debian GNU/Linux system. Otherwise you can build it yourself by following the instructions below.
@@ -35,7 +35,11 @@ extension=gdal.so
 EOF
 # service apache2 graceful # if running mod-php5 for Apache2
 # service php5-fpm reload # if running FastCGI PHP-FPM
-# php -i | less # to check that extension "gdal" is enabled, you should see:
+# php -i | less # to check that extension "gdal" is enabled
+```
+
+From the last command (or showing a 'phpinfo();' page), you should see something like:
+```
 gdal
 
 GDAL support => enabled
@@ -71,8 +75,15 @@ You should now see (where 20140613-1 is the version, named after today's date):
 ```
 
 
-COMMUNITY
----------
+Community
+=========
 
 The source is hosted on GitHub : https://github.com/geonef/php5-gdal
-It was added recently and basic documentation is yet to be written.
+
+Main contributors are:
+* [Jean-François Gigand](@jfgigand) <jf@geonef.fr> (maintainer)
+* [Michal Schneider](@schneidermichal)
+
+There are other contributors: check out the [GitHub page](https://github.com/geonef/php5-gdal/graphs/contributors).
+
+Feel free to contribute yourself, thanks!
