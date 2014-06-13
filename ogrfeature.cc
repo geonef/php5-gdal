@@ -279,15 +279,15 @@ PHP_METHOD(OGRFeature, SetField)
                             &idx, &value, &month, &day, &hour, &minute, &second, &tzFlag) == FAILURE) {
     return;
   }
-  
+
   obj = (php_ogrfeature_object *)
     zend_object_store_get_object(getThis() TSRMLS_CC);
   feature = obj->feature;
-  
+
   if (ZEND_NUM_ARGS() == 2) {
     switch (Z_TYPE_P(value)) {
       case IS_LONG:
-        feature->SetField(idx, Z_LVAL_P(value));
+        feature->SetField((int) idx, (int) Z_LVAL_P(value));
         break;
       case IS_DOUBLE:
         feature->SetField(idx, Z_DVAL_P(value));
@@ -405,7 +405,7 @@ PHP_METHOD(OGRFeature, SetGeometry)
       == FAILURE) {
     return;
   }
-  
+
   geometry_obj = (php_ogrgeometry_object *)
     zend_object_store_get_object(ogrgeometryp);
   geometry = geometry_obj->geometry;
