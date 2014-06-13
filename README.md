@@ -17,12 +17,21 @@ difficult, so feel free to add the ones you need.
 This module is UNSTABLE. Don't use it on production environment as it is.
 
 
+BUILD INSTRUCTIONS
+------------------
+
+On a Debian GNU/Linux:
+```
+# apt-get install g++ php5-dev libgdal1-dev
+# git clone https://github.com/geonef/php5-gdal.git && cd php5-gdal
+# phpize
+```
+
+For other distributions/OS, please adapt the instruction (the "apt-get install", mainly), feel free to share them through a GitHub pull request or email to to maintainer jf@geonef.fr. Thanks!
+
+
 COMMUNITY
 ---------
 
 The source is hosted on GitHub : https://github.com/geonef/php5-gdal
 It was added recently and basic documentation is yet to be written.
-
-The project (bug tracker, wiki, forums) is hosted on : http://projects.geonef.fr/projects/php5-gdal
-A mailing-list is available here : http://ml.geonef.fr/mailman/listinfo/php5-gdal-dev
-
