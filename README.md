@@ -49,7 +49,8 @@ GDAL drivers => VRT GTiff NITF RPFTOC ECRGTOC HFA SAR_CEOS CEOS JAXAPALSAR GFF E
 OGR drivers => ESRI Shapefile MapInfo File UK .NTF SDTS TIGER S57 DGN VRT REC Memory BNA CSV NAS GML GPX LIBKML KML GeoJSON Interlis 1 Interlis 2 GMT SQLite DODS ODBC PGeo MSSQLSpatial OGDI PostgreSQL MySQL PCIDSK XPlane AVCBin AVCE00 DXF Geoconcept GeoRSS GPSTrackMaker VFK PGDump GPSBabel SUA OpenAir PDS WFS HTF AeronavFAA Geomedia EDIGEO GFT SVG CouchDB Idrisi ARCGEN SEGUKOOA SEGY XLS
 ```
 
-For other distributions/OS, please adapt the instruction (the "apt-get install", mainly), feel free to share them through a GitHub pull request or email to to maintainer jf@geonef.fr. Thanks!
+**For other distributions/OS**
+please adapt the instructions, it should not be difficult if you know your distrib. Feel free to share them through a GitHub pull request or email to maintainer jf@geonef.fr. Thanks!
 
 Build a Debian (.deb) package
 -----------------------------
