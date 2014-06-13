@@ -81,8 +81,8 @@ Community
 The source is hosted on GitHub : https://github.com/geonef/php5-gdal
 
 Main contributors are:
-* [Jean-François Gigand](@jfgigand) <jf@geonef.fr> (maintainer)
-* [Michal Schneider](@schneidermichal)
+* Jean-François Gigand (@jfgigand) <jf@geonef.fr> (maintainer)
+* Michal Schneider (@schneidermichal)
 
 There are other contributors: check out the [GitHub page](https://github.com/geonef/php5-gdal/graphs/contributors).
 
