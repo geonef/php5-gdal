@@ -29,7 +29,7 @@ zend_object_value ogrgeometryfactory_create_handler(zend_class_entry *type TSRML
   zend_object_value retval;
 
   php_ogrgeometryfactory_object *obj =
-    (php_ogrgeometryfactory_object *)emalloc(sizeof(php_ogrgeometryfactory_object));
+      (php_ogrgeometryfactory_object *)emalloc(sizeof(php_ogrgeometryfactory_object));
   memset(obj, 0, sizeof(php_ogrgeometryfactory_object));
   obj->std.ce = type;
 
@@ -96,6 +96,13 @@ PHP_METHOD(OGRGeometryFactory, createFromWkt)
   {
     RETURN_NULL();
   }
+  if (object_init_ex(return_value, gdal_ogrgeometry_ce) != SUCCESS) {
+    OGRGeometryFactory::destroyGeometry(geometry);
+    RETURN_NULL();
+  }
+  php_ogrgeometry_object *geometry_obj = (php_ogrgeometry_object*)
+    zend_object_store_get_object(return_value TSRMLS_CC);
+  geometry_obj->geometry = geometry;
 }
 
 zend_function_entry ogrgeometryfactory_methods[] = {
