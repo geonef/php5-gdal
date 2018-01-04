@@ -58,7 +58,7 @@ PHP_METHOD(OGRGeometryFactory, createFromWkt)
   int wkt_len;
   zval *srefp;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char *)"sO!",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char *)"s\O!",
                             &wkt, &wkt_len,
                             &srefp, gdal_ogrspatialreference_ce) == FAILURE)
   {
