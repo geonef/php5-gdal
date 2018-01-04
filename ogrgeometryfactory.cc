@@ -48,6 +48,30 @@ zend_object_value ogrgeometryfactory_create_handler(zend_class_entry *type TSRML
   return retval;
 }
 
+/**
+ * OGRGeometryFactory::createFromWkt(char **wkt, OGRSpatialReference *sref, OGRGeometry **outGeom)
+ */
+PHP_METHOD(OGRGeometryFactory, createFromWkt)
+{
+  char *wkt;
+  int wkt_len;
+  zval *srefp;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char *)"sO!",
+                            &wkt, &wkt_len,
+                            &srefp, gdal_ogrspatialreference_ce) == FAILURE)
+  {
+    return;
+  }
+
+  OGRSpatialReference *sref = NULL;
+  if(srefp != NULL) {
+    php_ogrspatialreference_object *sref_obj = (php_ogrspatialreference_object*)zend_object_store_get_object(srefp);
+    sref = sref_obj->spatialreference;
+  }
+
+}
+
 zend_function_entry ogrgeometryfactory_methods[] = {
   {NULL, NULL, NULL}
 };
