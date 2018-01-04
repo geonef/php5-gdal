@@ -71,6 +71,31 @@ PHP_METHOD(OGRGeometryFactory, createFromWkt)
     sref = sref_obj->spatialreference;
   }
 
+  OGRGeometry *geometry;
+  OGRErr error = OGRGeometryFactory::createFromWkt(&wkt, sref, &geometry);
+
+  if (error != OGRERR_NONE) 
+  {
+    switch (error)
+    {
+      case OGRERR_NOT_ENOUGH_DATA:
+        zend_throw_exception(NULL, (char *)"OGR: Not enough data", 0 TSRMLS_CC);
+        break;
+      case OGRERR_UNSUPPORTED_GEOMETRY_TYPE:
+        zend_throw_exception(NULL, (char *)"OGR: Unsupported geometry type", 0 TSRMLS_CC);
+        break;
+      case OGRERR_CORRUPT_DATA:
+        zend_throw_exception(NULL, (char *)"OGR: Corrupt data", 0 TSRMLS_CC);
+        break;
+      default:
+        zend_throw_exception(NULL, (char *)"OGR: Unknown error deserializing WKT", 0 TSRMLS_CC);
+    }
+  }
+
+  if (!geometry)
+  {
+    RETURN_NULL();
+  }
 }
 
 zend_function_entry ogrgeometryfactory_methods[] = {
