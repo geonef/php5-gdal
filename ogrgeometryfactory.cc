@@ -106,6 +106,7 @@ PHP_METHOD(OGRGeometryFactory, createFromWkt)
 }
 
 zend_function_entry ogrgeometryfactory_methods[] = {
+  PHP_ME(OGRGeometryFactory, createFromWkt, NULL,  ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   {NULL, NULL, NULL}
 };
 
