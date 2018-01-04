@@ -1,5 +1,6 @@
 #include "php.h"
 #include "php_gdal.h"
+#include <zend_exceptions.h>
 #include <ogr_core.h>
 #include <cpl_conv.h>
 #include <cpl_string.h>
