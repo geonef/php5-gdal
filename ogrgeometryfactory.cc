@@ -58,7 +58,7 @@ PHP_METHOD(OGRGeometryFactory, createFromWkt)
   int wkt_len;
   zval *srefp;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char *)"s\O!",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char *)"O",
                             &wkt, &wkt_len,
                             &srefp, gdal_ogrspatialreference_ce) == FAILURE)
   {
@@ -119,7 +119,7 @@ PHP_METHOD(OGRGeometryFactory, DestroyGeometry)
   obj = (php_ogrgeometry_object *)zend_object_store_get_object(p);
   if (obj) {
     geometry = obj->geometry;
-    OGRGeometryFactory::DestroyGeometry(geometry);
+    OGRGeometryFactory::destroyGeometry(geometry);
   }
 }
 
