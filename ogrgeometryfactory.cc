@@ -105,7 +105,26 @@ PHP_METHOD(OGRGeometryFactory, createFromWkt)
   geometry_obj->geometry = geometry;
 }
 
+PHP_METHOD(OGRGeometryFactory, DestroyGeometry)
+{
+  OGRGeometry *geometry;
+  php_ogrgeometry_object *obj;
+  zval *p;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, (char*)"O",
+                            &p, gdal_ogrgeometry_ce) == FAILURE) {
+    return;
+  }
+
+  obj = (php_ogrgeometry_object *)zend_object_store_get_object(p);
+  if (obj) {
+    geometry = obj->geometry;
+    OGRGeometryFactory::DestroyGeometry(geometry);
+  }
+}
+
 zend_function_entry ogrgeometryfactory_methods[] = {
+  PHP_ME(OGRGeometryFactory, DestroyGeometry, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   PHP_ME(OGRGeometryFactory, createFromWkt, NULL,  ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   {NULL, NULL, NULL}
 };
