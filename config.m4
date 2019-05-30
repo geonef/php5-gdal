@@ -84,7 +84,7 @@ if test "$PHP_GDAL" != "no"; then
   PHP_SUBST(GDAL_SHARED_LIBADD)
   PHP_ADD_LIBRARY(stdc++, 1, GDAL_SHARED_LIBADD)
   PHP_NEW_EXTENSION(gdal, php_gdal.cc gdal_main.cc cpl.cc ogr.cc ogrsfdriverregistrar.cc ogrsfdriver.cc \
-            ogrdatasource.cc ogrlayer.cc ogrgeometry.cc ogrfeaturedefn.cc ogrfielddefn.cc ogrenvelope.cc \
+            ogrdatasource.cc ogrlayer.cc ogrgeometry.cc ogrgeometryfactory.cc ogrfeaturedefn.cc ogrfielddefn.cc ogrenvelope.cc \
             ogrspatialreference.cc ogrcoordtransform.cc ogrfeature.cc gdaldrivermanager.cc gdaldriver.cc \
             gdaldataset.cc gdalrasterband.cc ogrexception.cc, $ext_shared)
 fi
